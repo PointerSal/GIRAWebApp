@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GIRA — Care Monitor</title>
   <link rel="stylesheet" href="assets/css/gira.css"/>
+  <link rel="manifest" href="/manifest.json"> 
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(registration) {
+          console.log('ServiceWorker registrato con successo nell scope: ', registration.scope);
+        }, function(err) {
+          console.log('Registrazione ServiceWorker fallita: ', err);
+        });
+      });
+    }
+  </script>  
   <style>
     /* ── stili specifici di questa pagina ── */
     .hero { padding: var(--space-3xl) 0 var(--space-2xl); }
@@ -38,7 +50,7 @@
     <p class="eyebrow">Care Monitor · RSA</p>
     <h1>Monitoraggio<br/><em>intelligente</em><br/>del paziente.</h1>
     <p class="subtitle">
-      GIRA è una piattaforma SaaS per il monitoraggio continuo della postura degli anziani in strutture RSA, basata su sensori giroscopici IoT HolyIoT. Alert in tempo reale per gli operatori sanitari, zero infrastruttura aggiuntiva.
+      GIRA (Guida intelligente al Riposizionamento Assistito) è una piattaforma, basata su sensori giroscopici, per il monitoraggio continuo della postura degli anziani. Alert in tempo reale per gli operatori sanitari, zero infrastruttura aggiuntiva.
     </p>
     <div class="card card--accent-left card--warn status-card anim-fadein anim-delay-3">
       <div class="status-dot status-dot--warn"></div>
@@ -92,27 +104,27 @@
     <div class="table-stack">
       <div class="table-row">
         <span class="pill pill--ok table-row__pill">OK</span>
-        <span class="table-row__label">Sig. Rossi · Stanza 3 · Letto A — Posizione: Lato A</span>
+        <span class="table-row__label">Stanza 3 · Letto A — Posizione: Lato A</span>
         <span class="table-row__meta">aggiornato 00:42</span>
       </div>
       <div class="table-row">
         <span class="pill pill--warn table-row__pill">Arancio</span>
-        <span class="table-row__label">Sig.ra Bianchi · Stanza 7 · Letto B — Supina da 22 min</span>
+        <span class="table-row__label">Stanza 7 · Letto B — Posizione: Supina da 22 min</span>
         <span class="table-row__meta">alert 01:18</span>
       </div>
       <div class="table-row">
         <span class="pill pill--red table-row__pill">Rosso</span>
-        <span class="table-row__label">Sig. Ferrari · Stanza 12 · Letto A — Supino da 47 min</span>
+        <span class="table-row__label">Stanza 12 · Letto A — Posizione: Supina da 47 min</span>
         <span class="table-row__meta">alert 01:03</span>
       </div>
       <div class="table-row">
         <span class="pill pill--ok table-row__pill">OK</span>
-        <span class="table-row__label">Sig.ra Conti · Stanza 2 · Letto A — Posizione: Supina</span>
+        <span class="table-row__label">Stanza 2 · Letto A — Posizione: Supina</span>
         <span class="table-row__meta">aggiornato 01:55</span>
       </div>
       <div class="table-row">
         <span class="pill pill--warn table-row__pill">Batteria</span>
-        <span class="table-row__label">Sig. Marini · Stanza 9 · Letto B — Batteria 18%</span>
+        <span class="table-row__label">Stanza 9 · Letto B — Batteria 12%</span>
         <span class="table-row__meta">alert 00:30</span>
       </div>
     </div>
@@ -120,8 +132,7 @@
 
   <!-- FOOTER -->
   <footer class="anim-fadein anim-delay-5">
-    <span>© 2026 GIRA · <a href="https://tischedo.it" target="_blank">tischedo.it</a></span>
-    <span>gira.tischedo.it</span>
+    <span>© 2026 GIRA · gira.tischedo.it</span>
     <span>Piattaforma in sviluppo · Tutti i diritti riservati</span>
   </footer>
 
