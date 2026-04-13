@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GIRA — Care Monitor</title>
-  <link rel="stylesheet" href="assets/css/gira.css"/>
+  <link rel="stylesheet" href="<?= APP_URL ?>/assets/css/gira.css"/>
   <link rel="manifest" href="/manifest.json"> 
   <script>
     if ('serviceWorker' in navigator) {
@@ -19,6 +19,21 @@
   </script>  
   <style>
     /* ── stili specifici di questa pagina ── */
+    .btn-accedi {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: 6px 16px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: background var(--transition), color var(--transition);
+    }
+    .btn-accedi:hover {
+      background: var(--green);
+      color: var(--bg);
+    }
     .hero { padding: var(--space-3xl) 0 var(--space-2xl); }
     .subtitle { max-width: 520px; margin-bottom: var(--space-2xl); }
     .status-card { display: inline-flex; align-items: center; gap: 20px; }
@@ -42,7 +57,8 @@
       </svg>
     </div>
     <span class="logo-text">GI<span>RA</span></span>
-    <span class="badge" style="margin-left:auto;">In sviluppo</span>
+    <a href="<?= APP_URL ?>/auth/login" class="btn-accedi" style="margin-left:auto;">Accedi</a>
+    <span class="badge">Beta</span>
   </header>
 
   <!-- HERO -->
@@ -55,7 +71,7 @@
     <div class="card card--accent-left card--warn status-card anim-fadein anim-delay-3">
       <div class="status-dot status-dot--warn"></div>
       <div>
-        <p style="color:var(--amber); font-size:0.78rem; font-weight:500; margin-bottom:2px;">Piattaforma in fase di sviluppo</p>
+        <p style="color:var(--amber); font-size:0.78rem; font-weight:500; margin-bottom:2px;">Versione Beta</p>
         <p style="font-size:0.78rem;">Accesso riservato ai partner RSA · Disponibile a breve</p>
       </div>
     </div>
@@ -132,8 +148,8 @@
 
   <!-- FOOTER -->
   <footer class="anim-fadein anim-delay-5">
-    <span>© 2026 GIRA · gira.tischedo.it</span>
-    <span>Piattaforma in sviluppo · Tutti i diritti riservati</span>
+    <span>© <?= date('Y') ?> GIRA · <a href="https://tischedo.it" target="_blank">tischedo.it</a></span>
+    <span>gira.tischedo.it · Tutti i diritti riservati</span>
   </footer>
 
 </div>

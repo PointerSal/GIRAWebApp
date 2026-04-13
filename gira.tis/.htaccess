@@ -1,4 +1,15 @@
-# Forza HTTPS in modo indipendente
+Options -Indexes
+
 RewriteEngine On
+RewriteBase /
+
+# Forza HTTPS
 RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Lascia passare file e cartelle reali (css, js, img, sw.js, manifest.json)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Tutto il resto → index.php
+RewriteRule ^ index.php [L]
