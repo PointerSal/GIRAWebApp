@@ -13,3 +13,5 @@ RewriteCond %{REQUEST_FILENAME} !-d
 
 # Tutto il resto → index.php
 RewriteRule ^ index.php [L]
+
+ErrorDocument 404 /index.php

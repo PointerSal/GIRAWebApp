@@ -64,7 +64,7 @@ class AuthController
     public static function logout(): void
     {
         Auth::logout();
-        header('Location: ' . APP_URL . '/auth/login');
+        header('Location: ' . APP_URL);
         exit;
     }
 

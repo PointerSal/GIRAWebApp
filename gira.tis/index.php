@@ -133,14 +133,14 @@ require_once BASE_PATH . 'app/Models/Subscription.php';
 // ============================================================
 require_once BASE_PATH . 'app/Controllers/AuthController.php';
 require_once BASE_PATH . 'app/Controllers/DashboardController.php';
-/*require_once BASE_PATH . 'app/Controllers/StrutturaController.php';
+require_once BASE_PATH . 'app/Controllers/StrutturaController.php';
 require_once BASE_PATH . 'app/Controllers/UtenteController.php';
 require_once BASE_PATH . 'app/Controllers/DeviceController.php';
 require_once BASE_PATH . 'app/Controllers/UbicazioneController.php';
 require_once BASE_PATH . 'app/Controllers/AlertController.php';
-require_once BASE_PATH . 'app/Controllers/IngestController.php';
-require_once BASE_PATH . 'app/Controllers/PushController.php';
-require_once BASE_PATH . 'app/Controllers/ReportController.php'; */
+// require_once BASE_PATH . 'app/Controllers/IngestController.php';
+// require_once BASE_PATH . 'app/Controllers/PushController.php';
+// require_once BASE_PATH . 'app/Controllers/ReportController.php';  quando decommenti qua, decommenta anche righe 283 - 286
 
 
 // ============================================================
@@ -235,6 +235,7 @@ $routes = [
         'elimina'      => fn() => DeviceController::elimina($id),
         'assegna'      => fn() => DeviceController::assegna($id),
         'assegna-post' => fn() => DeviceController::assegnaPost(),
+        'ubicazioni-json' => fn() => DeviceController::ubicazioniJson(),
     ],
 
     // ----------------------------------------------------------
@@ -279,10 +280,10 @@ $routes = [
     // ----------------------------------------------------------
     // REPORT (admin + superadmin)
     // ----------------------------------------------------------
-    'report' => [
+    /*     'report' => [
         'index'   => fn() => ReportController::index(),
         'esporta' => fn() => ReportController::esporta(),
-    ],
+    ], */
 
 ];
 

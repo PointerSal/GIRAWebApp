@@ -1,9 +1,0 @@
-[13-Apr-2026 16:00:33 UTC] PHP Fatal error:  Uncaught Error: Class "UtenteController" not found in /home/klmkejnd/tis.gira/index.php:211
-Stack trace:
-#0 /home/klmkejnd/tis.gira/index.php(307): {closure}()
-#1 {main}
-  thrown in /home/klmkejnd/tis.gira/index.php on line 211
-[13-Apr-2026 16:07:03 UTC] PHP Warning:  include(/home/klmkejnd/SaaS/gira/app/Views/layout/404.php): Failed to open stream: No such file or directory in /home/klmkejnd/tis.gira/index.php on line 310
-[13-Apr-2026 16:07:03 UTC] PHP Warning:  include(): Failed opening '/home/klmkejnd/SaaS/gira/app/Views/layout/404.php' for inclusion (include_path='.:/opt/cpanel/ea-php81/root/usr/share/pear') in /home/klmkejnd/tis.gira/index.php on line 310
-[13-Apr-2026 16:07:06 UTC] PHP Warning:  include(/home/klmkejnd/SaaS/gira/app/Views/layout/404.php): Failed to open stream: No such file or directory in /home/klmkejnd/tis.gira/index.php on line 310
-[13-Apr-2026 16:07:06 UTC] PHP Warning:  include(): Failed opening '/home/klmkejnd/SaaS/gira/app/Views/layout/404.php' for inclusion (include_path='.:/opt/cpanel/ea-php81/root/usr/share/pear') in /home/klmkejnd/tis.gira/index.php on line 310
