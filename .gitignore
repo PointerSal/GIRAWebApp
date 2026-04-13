@@ -1,0 +1,16 @@
+# Impostazioni locali di VS Code
+.vscode/
+# File di configurazione contenenti segreti o variabili d'ambiente
+.env
+config.json
+# Dipendenze (non vanno mai caricate, si usa il package manager)
+node_modules/
+__pycache__/
+# File di sistema
+.DS_Store
+Thumbs.db
+# Escludi tutti i file chiamati config.php
+config.php
+
+# Se vuoi escludere tutti i file PHP che iniziano con 'config' (es. config.db.php)
+config*.php
