@@ -127,16 +127,15 @@ foreach ($data['devices'] as $dev) {
     $db->prepare(
         "INSERT INTO gir_device_stato
             (id_device, posizione, stato_batt, stato_segnale, stato_pulsante,
-             ultimo_contatto, aggiornato_alle)
+             ultimo_contatto)
          VALUES
-            (:id, :pos, :batt, :rssi, :pulsante, NOW(), NOW())
+            (:id, :pos, :batt, :rssi, :pulsante, NOW())
          ON DUPLICATE KEY UPDATE
             posizione       = VALUES(posizione),
             stato_batt      = VALUES(stato_batt),
             stato_segnale   = VALUES(stato_segnale),
             stato_pulsante  = VALUES(stato_pulsante),
-            ultimo_contatto = NOW(),
-            aggiornato_alle = NOW()"
+            ultimo_contatto = NOW()"
     )->execute([
         ':id'      => $idDevice,
         ':pos'     => $posizione,

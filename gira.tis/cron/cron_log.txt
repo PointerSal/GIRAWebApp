@@ -1,0 +1,2 @@
+2026-04-14 01:20:01 — Alert OFFLINE aperto per device 1 (silenzioso da 11 min)
+2026-04-14 01:25:02 — Alert OFFLINE aperto per device 1 (silenzioso da 16 min)
