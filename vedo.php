@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 // ============================================================
-// GIRA · vedo.php
-// Mostra solo: timestamp, mac, x, y, z, stato (da gateway_log.txt)
+// GIRA · vedo.php (LIGHT-LOG READER)
+// Legge gateway_log.txt in formato riga CSV:
+//   timestamp,mac,x,y,z,stato
+// e mostra una tabella semplice.
 // ============================================================
 
 ob_start();
@@ -18,108 +20,57 @@ if (isset($_GET['clear']) && $_GET['clear'] === '1') {
     exit;
 }
 
-// Legge log
-$log = file_exists($log_file) ? file_get_contents($log_file) : '';
-$log = ($log === false) ? '' : $log;
+// Quante righe mostrare (default 50)
+$n = isset($_GET['n']) ? max(1, min(1000, (int)$_GET['n'])) : 50;
 
-// Split pacchetti: nel tuo log ogni entry è racchiusa tra righe di "====="
-$chunks = preg_split("/=+\n/", $log);
-$chunks = array_values(array_filter(array_map('trim', $chunks)));
+// Legge file
+$lines = [];
+if (file_exists($log_file)) {
+    $raw = file($log_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if (is_array($raw)) {
+        $lines = $raw;
+    }
+}
 
+// Parsing CSV per riga
+$rows = [];
+foreach ($lines as $line) {
+    $line = trim($line);
+    if ($line === '') continue;
+
+    // opzionale: salta header CSV
+    if (stripos($line, 'timestamp,mac,') === 0) continue;
+
+    // split CSV semplice (6 campi attesi)
+    $parts = str_getcsv($line);
+    if (count($parts) < 6) continue;
+
+    [$ts, $mac, $x, $y, $z, $stato] = array_slice($parts, 0, 6);
+
+    $rows[] = [
+        'ts'    => $ts,
+        'mac'   => strtoupper(preg_replace('/[^0-9A-F]/i', '', (string)$mac)),
+        'x'     => is_numeric($x) ? (int)$x : null,
+        'y'     => is_numeric($y) ? (int)$y : null,
+        'z'     => is_numeric($z) ? (int)$z : null,
+        'stato' => is_numeric($stato) ? (int)$stato : null,
+    ];
+}
+
+// Mostra solo le ultime N righe
+$total = count($rows);
+if ($total > $n) {
+    $rows = array_slice($rows, $total - $n, $n);
+}
+
+// Helper HTML
 function h(string $s): string
 {
     return htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
-function extract_header_value(string $chunk, string $key): string
-{
-    if (preg_match('/^' . preg_quote($key, '/') . '\s*:\s*(.*)$/m', $chunk, $m)) {
-        return trim($m[1]);
-    }
-    return '';
-}
-
-function extract_section(string $chunk, string $label): string
-{
-    // Prende tutto dopo "$label :" fino alla prossima riga di trattini oppure fine
-    $pattern = '/' . preg_quote($label, '/') . '\s*:\s*\n(.*?)(\n-+\n|\z)/s';
-    if (preg_match($pattern, $chunk, $m)) {
-        return trim($m[1]);
-    }
-    return '';
-}
-
-// Estrae righe: [mac] => ... [x] => ... [y] => ... [z] => ... [stato] => ...
-function parse_decoded_ble_rows(string $decoded): array
-{
-    $rows = [];
-
-    // Cerchiamo blocchi "device" che contengono mac e gira
-    // Approccio robusto: estrai tutte le occorrenze del pattern mac + x/y/z/stato
-    $pattern = '/\[\s*mac\s*\]\s*=>\s*([0-9A-F]+).*?\[\s*gira\s*\]\s*=>\s*Array\s*\(\s*(.*?)\)\s*/si';
-
-    if (preg_match_all($pattern, $decoded, $matches, PREG_SET_ORDER)) {
-        foreach ($matches as $m) {
-            $mac = strtoupper(trim($m[1]));
-            $giraBlock = $m[2];
-
-            $x = extract_num($giraBlock, 'x');
-            $y = extract_num($giraBlock, 'y');
-            $z = extract_num($giraBlock, 'z');
-            $stato = extract_num($giraBlock, 'stato');
-
-            // rssi del device (se presente nello stesso "device block")
-            $rssi = null;
-            if (preg_match('/\[\s*rssi\s*\]\s*=>\s*(-?\d+)/i', $m[0], $rm)) {
-                $rssi = (int)$rm[1];
-            }
-
-            // Se gira non c'è davvero (x/y/z/stato null), salta
-            if ($x === null && $y === null && $z === null && $stato === null) {
-                continue;
-            }
-
-            $rows[] = [
-                'mac' => $mac,
-                'x' => $x,
-                'y' => $y,
-                'z' => $z,
-                'stato' => $stato,
-                'rssi' => $rssi,
-            ];
-        }
-    }
-
-    return $rows;
-}
-
-function extract_num(string $block, string $key): ?int
-{
-    if (preg_match('/\[\s*' . preg_quote($key, '/') . '\s*\]\s*=>\s*(-?\d+)/i', $block, $m)) {
-        return (int)$m[1];
-    }
-    return null;
-}
-
-// Costruisce righe tabella prendendo l’ultima entry (o tutte, se vuoi)
-$rows = [];
-$latestWhen = null;
-
-if (!empty($chunks)) {
-    // Prendi l’ultima entry (più recente): nel log append, l’ultima è in fondo
-    $lastChunk = $chunks[count($chunks) - 1];
-
-    $latestWhen = extract_header_value($lastChunk, 'DATA/ORA');
-    $decodedBle = extract_section($lastChunk, 'DECODED_BLE');
-    if ($decodedBle === '') {
-        // fallback se nel log c'è ancora "DECODED" vecchio stile
-        $decodedBle = extract_section($lastChunk, 'DECODED');
-    }
-
-    if ($decodedBle !== '') {
-        $rows = parse_decoded_ble_rows($decodedBle);
-    }
-}
+// Timestamp ultimo record
+$latestTs = $total > 0 ? $rows[count($rows) - 1]['ts'] : 'n/d';
 
 ?>
 <!doctype html>
@@ -128,7 +79,7 @@ if (!empty($chunks)) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>GIRA · Viewer Light</title>
+    <title>GIRA · Vedo (Light)</title>
     <meta http-equiv="refresh" content="5">
     <style>
         body {
@@ -200,6 +151,17 @@ if (!empty($chunks)) {
         .ok {
             color: #3ddc84;
         }
+
+        .right {
+            margin-left: auto;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .small {
+            font-size: 12px;
+        }
     </style>
 </head>
 
@@ -207,24 +169,25 @@ if (!empty($chunks)) {
     <div class="wrap">
         <div class="top">
             <div>
-                <strong>GIRA · Viewer Light</strong>
+                <strong>GIRA · Vedo (Light)</strong>
                 <span class="pill">Auto-refresh 5s</span>
+                <span class="pill">Mostro ultime <?php echo (int)$n; ?> righe</span>
             </div>
-            <div>
+            <div class="right">
                 <a href="vedo.php">↻ Aggiorna</a>
-                &nbsp;|&nbsp;
                 <a href="vedo.php?clear=1">✕ Svuota log</a>
             </div>
         </div>
 
         <div class="card">
-            <div><span class="muted">Ultimo pacchetto:</span> <span class="ok"><?php echo h($latestWhen ?: 'n/d'); ?></span></div>
-            <div class="muted">Mostro solo i device che hanno `manufacturer.gira` (x,y,z,stato).</div>
+            <div><span class="muted">Righe totali:</span> <span class="ok"><?php echo (int)$total; ?></span></div>
+            <div><span class="muted">Ultimo timestamp:</span> <span class="ok"><?php echo h($latestTs); ?></span></div>
+            <div class="muted small">Formato atteso: <code>timestamp,mac,x,y,z,stato</code></div>
         </div>
 
         <div class="card">
             <?php if (empty($rows)): ?>
-                <div class="muted">Nessun dato x/y/z/stato trovato nell’ultima entry (controlla che `ingest.php` scriva `DECODED_BLE`).</div>
+                <div class="muted">Nessuna riga valida trovata in gateway_log.txt.</div>
             <?php else: ?>
                 <table>
                     <thead>
@@ -235,27 +198,28 @@ if (!empty($chunks)) {
                             <th>Y</th>
                             <th>Z</th>
                             <th>Stato</th>
-                            <th>RSSI</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($rows as $r): ?>
                             <tr>
-                                <td><?php echo h($latestWhen ?: 'n/d'); ?></td>
-                                <td><?php echo h($r['mac']); ?></td>
-                                <td><?php echo h((string)($r['x'] ?? '')); ?></td>
-                                <td><?php echo h((string)($r['y'] ?? '')); ?></td>
-                                <td><?php echo h((string)($r['z'] ?? '')); ?></td>
-                                <td><?php echo h((string)($r['stato'] ?? '')); ?></td>
-                                <td><?php echo h((string)($r['rssi'] ?? '')); ?></td>
+                                <td><?php echo h((string)$r['ts']); ?></td>
+                                <td><?php echo h((string)$r['mac']); ?></td>
+                                <td><?php echo h($r['x'] === null ? '' : (string)$r['x']); ?></td>
+                                <td><?php echo h($r['y'] === null ? '' : (string)$r['y']); ?></td>
+                                <td><?php echo h($r['z'] === null ? '' : (string)$r['z']); ?></td>
+                                <td><?php echo h($r['stato'] === null ? '' : (string)$r['stato']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php endif; ?>
         </div>
+
+        <div class="card small muted">
+            Suggerimento: cambia numero righe con <code>?n=200</code> (max 1000).
+        </div>
     </div>
 </body>
 
 </html>
-<?php ob_end_flush(); ?>
