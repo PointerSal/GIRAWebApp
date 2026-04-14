@@ -81,14 +81,16 @@ class DashboardController
     // ----------------------------------------------------------
     private static function _admin(PDO $db, array $utente, string $page_title, string $current_page): void
     {
-        $strutture_ids = Auth::strutture_accessibili();
+        //$strutture_ids = Auth::strutture_accessibili();
+        $id_struttura  = Auth::struttura_attiva();
+        $strutture_ids = $id_struttura ? [$id_struttura] : Auth::strutture_accessibili();
         if (empty($strutture_ids)) {
             include VIEW_PATH . 'dashboard/no_struttura.php';
             return;
         }
 
         // Usa la prima struttura (di solito l'admin ne ha una sola)
-        $id_struttura = $strutture_ids[0];
+        //$id_struttura = $strutture_ids[0];
 
         $struttura = $db->prepare(
             'SELECT * FROM gir_struttura WHERE id = :id LIMIT 1'
@@ -148,7 +150,9 @@ class DashboardController
     // ----------------------------------------------------------
     private static function _medico(PDO $db, array $utente, string $page_title, string $current_page): void
     {
-        $strutture_ids = Auth::strutture_accessibili();
+        //$strutture_ids = Auth::strutture_accessibili();
+        $id_struttura  = Auth::struttura_attiva();
+        $strutture_ids = $id_struttura ? [$id_struttura] : Auth::strutture_accessibili();
 
         // Alert aperti nelle strutture del medico
         $placeholders = implode(',', array_fill(0, count($strutture_ids), '?'));
@@ -192,7 +196,7 @@ class DashboardController
     private static function _operatore(PDO $db, array $utente, string $page_title, string $current_page): void
     {
         $id_utente = Auth::id();
-
+        $id_struttura = Auth::struttura_attiva();
         // Device assegnati a questo operatore
         $device_assegnati = $db->prepare(
             'SELECT d.id, d.label, d.mac,
@@ -209,10 +213,14 @@ class DashboardController
           LEFT JOIN gir_alert a            ON a.id_device = d.id
                                           AND a.chiuso_alle IS NULL
                                           AND a.tipo IN ("ROSSO","ARANCIO","PULSANTE")
-              WHERE ud.id_utente = :uid
+              WHERE ud.id_utente = :uid AND (:id_struttura1 = 0 OR d.id_struttura = :id_struttura2)
               ORDER BY FIELD(a.tipo,"PULSANTE","ROSSO","ARANCIO"), d.label'
         );
-        $device_assegnati->execute([':uid' => $id_utente]);
+        $device_assegnati->execute([
+            ':uid'           => $id_utente,
+            ':id_struttura1' => $id_struttura,
+            ':id_struttura2' => $id_struttura,
+        ]);
         $device_assegnati = $device_assegnati->fetchAll();
 
         include VIEW_PATH . 'dashboard/operatore.php';

@@ -17,7 +17,9 @@ class DeviceController
         Middleware::verificaPasswordAggiornata();
 
         $db            = Database::getInstance();
-        $strutture_ids = Auth::strutture_accessibili();
+        //$strutture_ids = Auth::strutture_accessibili();
+        $id_struttura  = Auth::struttura_attiva();
+        $strutture_ids = $id_struttura ? [$id_struttura] : Auth::strutture_accessibili();
 
         if (empty($strutture_ids)) {
             $device = [];

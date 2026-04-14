@@ -82,7 +82,7 @@ class Auth
 
         // ✅ Login OK
         $db->prepare('UPDATE gir_utenti SET ultimo_accesso = NOW() WHERE id = :id')
-           ->execute([':id' => $utente['id']]);
+            ->execute([':id' => $utente['id']]);
 
         unset($utente['password_hash']);
         $_SESSION['utente'] = $utente;
@@ -115,7 +115,7 @@ class Auth
         $db       = Database::getInstance();
 
         $db->prepare('DELETE FROM gir_remember_tokens WHERE id_utente = :uid')
-           ->execute([':uid' => $utente_id]);
+            ->execute([':uid' => $utente_id]);
 
         $db->prepare(
             'INSERT INTO gir_remember_tokens (id_utente, token, scadenza)
@@ -335,5 +335,33 @@ class Auth
         ]);
 
         $_SESSION['utente']['deve_cambiare_pwd'] = 0;
+    }
+
+    /**
+     * Restituisce l'ID della struttura attiva in sessione.
+     * Se non impostata, usa la prima struttura accessibile.
+     */
+    public static function struttura_attiva(): int
+    {
+        if (self::isSuperadmin()) return 0; // superadmin → nessun filtro
+
+        // Se già in sessione → usa quella
+        if (!empty($_SESSION['struttura_attiva'])) {
+            return (int)$_SESSION['struttura_attiva'];
+        }
+
+        // Altrimenti prendi la prima disponibile
+        $ids = self::strutture_accessibili();
+        if (empty($ids)) return 0;
+
+        $_SESSION['struttura_attiva'] = $ids[0];
+        return (int)$ids[0];
+    }
+
+    public static function set_struttura_attiva(int $id): void
+    {
+        // Verifica che l'utente abbia accesso a questa struttura
+        if (!self::puo_accedere_struttura($id)) return;
+        $_SESSION['struttura_attiva'] = $id;
     }
 }

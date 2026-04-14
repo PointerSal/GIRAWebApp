@@ -204,6 +204,16 @@ $routes = [
         'sospendi'     => fn() => StrutturaController::sospendi($id),
     ],
 
+    'struttura-attiva' => [
+        'set' => fn() => (function () {
+            $id = (int)($_POST['id_struttura'] ?? 0);
+            Auth::set_struttura_attiva($id);
+            $redirect = $_POST['redirect'] ?? '/dashboard';
+            header('Location: ' . APP_URL . $redirect);
+            exit;
+        })(),
+    ],
+
     // ----------------------------------------------------------
     // UTENTI (superadmin + admin)
     // ----------------------------------------------------------

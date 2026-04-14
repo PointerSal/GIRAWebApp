@@ -38,10 +38,11 @@ class AlertController
                            a.aperto_alle ASC"
             );
             $alert = $stmt->fetchAll();
-
         } elseif (in_array($ruolo, [RUOLO_ADMIN, RUOLO_MEDICO])) {
             // Alert delle strutture accessibili
-            $strutture_ids = Auth::strutture_accessibili();
+            //$strutture_ids = Auth::strutture_accessibili();
+            $id_struttura  = Auth::struttura_attiva();
+            $strutture_ids = $id_struttura ? [$id_struttura] : Auth::strutture_accessibili();
             if (empty($strutture_ids)) {
                 $alert = [];
             } else {
@@ -65,9 +66,9 @@ class AlertController
                 $stmt->execute($strutture_ids);
                 $alert = $stmt->fetchAll();
             }
-
         } else {
             // Operatore — solo i device assegnati
+            $id_struttura = Auth::struttura_attiva();
             $stmt = $db->prepare(
                 "SELECT a.*, d.label, d.mac, d.id_struttura,
                         s.ragione_sociale AS struttura,
@@ -80,11 +81,16 @@ class AlertController
                    JOIN gir_utente_device ud ON ud.id_device = d.id AND ud.id_utente = :uid
               LEFT JOIN gir_ubicazione u  ON u.id = d.id_ubicazione
               LEFT JOIN gir_utenti ug     ON ug.id = a.id_utente_gestore
-                  WHERE a.chiuso_alle IS NULL
+                  WHERE a.chiuso_alle IS NULL AND (:id_struttura1 = 0 OR d.id_struttura = :id_struttura2)
                   ORDER BY FIELD(a.tipo,'PULSANTE','ROSSO','ARANCIO','BATTERIA','OFFLINE'),
                            a.aperto_alle ASC"
             );
-            $stmt->execute([':uid' => $id_utente]);
+            //$stmt->execute([':uid' => $id_utente, ':id_struttura' => $id_struttura,]);
+            $stmt->execute([
+                ':uid'           => $id_utente,
+                ':id_struttura1' => $id_struttura,
+                ':id_struttura2' => $id_struttura,
+            ]);
             $alert = $stmt->fetchAll();
         }
 
@@ -112,7 +118,9 @@ class AlertController
         $per_pagina       = 20;
         $offset           = ($pagina - 1) * $per_pagina;
 
-        $strutture_ids = Auth::strutture_accessibili();
+        //$strutture_ids = Auth::strutture_accessibili();
+        $id_struttura  = Auth::struttura_attiva();
+        $strutture_ids = $id_struttura ? [$id_struttura] : Auth::strutture_accessibili();
         if (empty($strutture_ids)) {
             $alert  = [];
             $totale = 0;
