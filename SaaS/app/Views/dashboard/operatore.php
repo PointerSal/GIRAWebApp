@@ -5,7 +5,7 @@
     <h1>Bentornato, <?= htmlspecialchars($utente['nome']) ?></h1>
     <div class="page-header-sub">I tuoi pazienti assegnati</div>
   </div>
-  <span style="font-size:0.75rem; color:var(--muted);"><?= date('d/m/Y H:i') ?></span>
+  <span id="gira-orologio" style="font-size:0.75rem; color:var(--muted);"></span>
 </div>
 
 <?php if (empty($device_assegnati)): ?>
@@ -16,57 +16,80 @@
 <?php else: ?>
   <div class="table-stack">
     <?php foreach ($device_assegnati as $d): ?>
-    <?php
+      <?php
       $pill_class = 'pill--ok';
       $pill_label = 'OK';
       $offline = ($d['minuti_silenzio'] ?? 999) > 10;
 
-      if ($d['alert_tipo'] === 'PULSANTE') { $pill_class = 'pill--red';  $pill_label = '🆘 SOS'; }
-      elseif ($d['alert_tipo'] === 'ROSSO')    { $pill_class = 'pill--red';  $pill_label = 'Rosso'; }
-      elseif ($d['alert_tipo'] === 'ARANCIO')  { $pill_class = 'pill--warn'; $pill_label = 'Arancio'; }
-      elseif ($offline)                        { $pill_class = 'pill--muted'; $pill_label = 'Offline'; }
-    ?>
-    <div class="table-row" data-device-id="<?= $d['id'] ?>" style="<?= $d['alert_tipo'] === 'PULSANTE' ? 'background:rgba(224,92,92,0.06);' : '' ?>">
-      <span class="pill <?= $pill_class ?> gira-stato-pill" style="width:72px; flex-shrink:0;"><?= $pill_label ?></span>
+      if ($d['alert_tipo'] === 'PULSANTE') {
+        $pill_class = 'pill--red';
+        $pill_label = '🆘 SOS';
+      } elseif ($d['alert_tipo'] === 'ROSSO') {
+        $pill_class = 'pill--red';
+        $pill_label = 'Rosso';
+      } elseif ($d['alert_tipo'] === 'ARANCIO') {
+        $pill_class = 'pill--warn';
+        $pill_label = 'Arancio';
+      } elseif ($offline) {
+        $pill_class = 'pill--muted';
+        $pill_label = 'Offline';
+      }
+      ?>
+      <div class="table-row" data-device-id="<?= $d['id'] ?>" style="<?= $d['alert_tipo'] === 'PULSANTE' ? 'background:rgba(224,92,92,0.06);' : '' ?>">
+        <span class="pill <?= $pill_class ?> gira-stato-pill" style="width:72px; flex-shrink:0;"><?= $pill_label ?></span>
 
-      <span class="table-row__label">
-        <strong><?= htmlspecialchars($d['label'] ?? $d['mac']) ?></strong>
-        <?php if ($d['area']): ?>
-          <span style="color:var(--muted); font-size:0.72rem; margin-left:8px;">
-            <?= htmlspecialchars($d['area']) ?>
-            <?= $d['subarea'] ? ' · ' . htmlspecialchars($d['subarea']) : '' ?>
-          </span>
+        <span class="table-row__label">
+          <strong><?= htmlspecialchars($d['label'] ?? $d['mac']) ?></strong>
+          <?php if ($d['area']): ?>
+            <span style="color:var(--muted); font-size:0.72rem; margin-left:8px;">
+              <?= htmlspecialchars($d['area']) ?>
+              <?= $d['subarea'] ? ' · ' . htmlspecialchars($d['subarea']) : '' ?>
+            </span>
+          <?php endif; ?>
+        </span>
+
+        <span class="table-row__meta" style="display:flex; gap:var(--space-md); align-items:center;">
+          <?php if (!$offline && $d['posizione']): ?>
+            <span class="gira-posizione" style="font-size:0.72rem; color:var(--text);"><?= $d['posizione'] ?></span>
+          <?php elseif ($offline): ?>
+            <span style="font-size:0.72rem; color:var(--muted);">Nessun segnale</span>
+          <?php endif; ?>
+
+          <?php if ($d['alert_minuti'] !== null): ?>
+            <span class="gira-minuti" style="font-size:0.72rem; color:var(--muted);"><?= $d['alert_minuti'] ?> min</span>
+          <?php endif; ?>
+
+          <?php if ($d['stato_batt'] !== null): ?>
+            <span class="gira-batteria" style="font-size:0.72rem; color:<?= $d['stato_batt'] < 20 ? 'var(--amber)' : 'var(--muted)' ?>">
+              🔋 <?= $d['stato_batt'] ?>%
+            </span>
+          <?php endif; ?>
+        </span>
+
+        <?php if ($d['alert_id']): ?>
+          <a href="<?= APP_URL ?>/alert/prendi-in-carico/<?= $d['alert_id'] ?>"
+            class="btn btn--outline" style="font-size:0.68rem; padding:4px 10px; border-color:var(--amber); color:var(--amber);">
+            Gestisci
+          </a>
         <?php endif; ?>
-      </span>
-
-      <span class="table-row__meta" style="display:flex; gap:var(--space-md); align-items:center;">
-        <?php if (!$offline && $d['posizione']): ?>
-          <span class="gira-posizione" style="font-size:0.72rem; color:var(--text);"><?= $d['posizione'] ?></span>
-        <?php elseif ($offline): ?>
-          <span style="font-size:0.72rem; color:var(--muted);">Nessun segnale</span>
-        <?php endif; ?>
-
-        <?php if ($d['alert_minuti'] !== null): ?>
-          <span class="gira-minuti" style="font-size:0.72rem; color:var(--muted);"><?= $d['alert_minuti'] ?> min</span>
-        <?php endif; ?>
-
-        <?php if ($d['stato_batt'] !== null): ?>
-          <span class="gira-batteria" style="font-size:0.72rem; color:<?= $d['stato_batt'] < 20 ? 'var(--amber)' : 'var(--muted)' ?>">
-            🔋 <?= $d['stato_batt'] ?>%
-          </span>
-        <?php endif; ?>
-      </span>
-
-      <?php if ($d['alert_id']): ?>
-        <a href="<?= APP_URL ?>/alert/prendi-in-carico/<?= $d['alert_id'] ?>"
-           class="btn btn--outline" style="font-size:0.68rem; padding:4px 10px; border-color:var(--amber); color:var(--amber);">
-          Gestisci
-        </a>
-      <?php endif; ?>
-    </div>
+      </div>
     <?php endforeach; ?>
   </div>
 <?php endif; ?>
+
+<script>
+  function aggiornaOrologio() {
+    const now = new Date();
+    const d = String(now.getDate()).padStart(2, '0');
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const Y = now.getFullYear();
+    const H = String(now.getHours()).padStart(2, '0');
+    const i = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('gira-orologio').textContent = d + '/' + m + '/' + Y + ' ' + H + ':' + i;
+  }
+  aggiornaOrologio();
+  setInterval(aggiornaOrologio, 1000);
+</script>
 
 <?php $extra_js = '<script src="' . APP_URL . '/assets/js/polling.js"></script>
 <script>

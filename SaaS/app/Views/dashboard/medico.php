@@ -5,7 +5,7 @@
     <h1>Dashboard</h1>
     <div class="page-header-sub">Visione clinica · <?= count($strutture_ids) ?> struttura<?= count($strutture_ids) > 1 ? 'e' : '' ?></div>
   </div>
-  <span style="font-size:0.75rem; color:var(--muted);"><?= date('d/m/Y H:i') ?></span>
+  <span id="gira-orologio" style="font-size:0.75rem; color:var(--muted);"></span>
 </div>
 
 <!-- Alert aperti -->
@@ -23,27 +23,27 @@
   <?php else: ?>
     <div class="table-stack">
       <?php foreach ($alert_aperti as $a): ?>
-      <?php
+        <?php
         $pill_class = 'pill--warn';
         if ($a['tipo'] === 'ROSSO' || $a['tipo'] === 'PULSANTE') $pill_class = 'pill--red';
         if ($a['tipo'] === 'BATTERIA' || $a['tipo'] === 'OFFLINE') $pill_class = 'pill--muted';
-      ?>
-      <div class="table-row">
-        <span class="pill <?= $pill_class ?>" style="width:72px; flex-shrink:0;">
-          <?= $a['tipo'] === 'PULSANTE' ? '🆘 SOS' : ucfirst(strtolower($a['tipo'])) ?>
-        </span>
-        <span class="table-row__label">
-          <strong><?= htmlspecialchars($a['label'] ?? $a['mac']) ?></strong>
-          <span style="color:var(--muted); font-size:0.72rem; margin-left:8px;">
-            <?= htmlspecialchars($a['struttura']) ?>
-            <?php if ($a['area']): ?>
-              · <?= htmlspecialchars($a['area']) ?>
-              <?= $a['subarea'] ? ' · ' . htmlspecialchars($a['subarea']) : '' ?>
-            <?php endif; ?>
+        ?>
+        <div class="table-row">
+          <span class="pill <?= $pill_class ?>" style="width:72px; flex-shrink:0;">
+            <?= $a['tipo'] === 'PULSANTE' ? '🆘 SOS' : ucfirst(strtolower($a['tipo'])) ?>
           </span>
-        </span>
-        <span class="table-row__meta"><?= $a['minuti_aperti'] ?> min</span>
-      </div>
+          <span class="table-row__label">
+            <strong><?= htmlspecialchars($a['label'] ?? $a['mac']) ?></strong>
+            <span style="color:var(--muted); font-size:0.72rem; margin-left:8px;">
+              <?= htmlspecialchars($a['struttura']) ?>
+              <?php if ($a['area']): ?>
+                · <?= htmlspecialchars($a['area']) ?>
+                <?= $a['subarea'] ? ' · ' . htmlspecialchars($a['subarea']) : '' ?>
+              <?php endif; ?>
+            </span>
+          </span>
+          <span class="table-row__meta"><?= $a['minuti_aperti'] ?> min</span>
+        </div>
       <?php endforeach; ?>
     </div>
   <?php endif; ?>
@@ -59,22 +59,36 @@
       </div>
     <?php else: ?>
       <?php foreach ($storico as $s): ?>
-      <div class="table-row">
-        <span class="table-row__label">
-          <strong><?= htmlspecialchars($s['label'] ?? $s['id_device']) ?></strong>
-          <span style="color:var(--muted); font-size:0.72rem; margin-left:8px;">
-            <?= htmlspecialchars($s['struttura']) ?>
+        <div class="table-row">
+          <span class="table-row__label">
+            <strong><?= htmlspecialchars($s['label'] ?? $s['id_device']) ?></strong>
+            <span style="color:var(--muted); font-size:0.72rem; margin-left:8px;">
+              <?= htmlspecialchars($s['struttura']) ?>
+            </span>
           </span>
-        </span>
-        <span style="font-size:0.75rem; color:var(--text);"><?= $s['posizione'] ?></span>
-        <?php if ($s['durata_minuti']): ?>
-          <span class="table-row__meta"><?= $s['durata_minuti'] ?> min</span>
-        <?php endif; ?>
-        <span class="table-row__meta"><?= date('H:i', strtotime($s['iniziato_alle'])) ?></span>
-      </div>
+          <span style="font-size:0.75rem; color:var(--text);"><?= $s['posizione'] ?></span>
+          <?php if ($s['durata_minuti']): ?>
+            <span class="table-row__meta"><?= $s['durata_minuti'] ?> min</span>
+          <?php endif; ?>
+          <span class="table-row__meta"><?= date('H:i', strtotime($s['iniziato_alle'])) ?></span>
+        </div>
       <?php endforeach; ?>
     <?php endif; ?>
   </div>
 </div>
+
+<script>
+  function aggiornaOrologio() {
+    const now = new Date();
+    const d = String(now.getDate()).padStart(2, '0');
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const Y = now.getFullYear();
+    const H = String(now.getHours()).padStart(2, '0');
+    const i = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('gira-orologio').textContent = d + '/' + m + '/' + Y + ' ' + H + ':' + i;
+  }
+  aggiornaOrologio();
+  setInterval(aggiornaOrologio, 1000);
+</script>
 
 <?php include VIEW_PATH . 'layout/footer.php'; ?>
