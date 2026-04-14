@@ -22,14 +22,14 @@
   </div>
   <div class="stat-card clickable" onclick="location.href='<?= APP_URL ?>/alert'">
     <div class="stat-label">Alert rossi</div>
-    <div class="stat-value" style="color:<?= ($alert_per_tipo['ROSSO'] ?? 0) > 0 ? 'var(--red)' : 'var(--green)' ?>">
+    <div class="stat-value" id="gira-count-rossi" style="color:<?= ($alert_per_tipo['ROSSO'] ?? 0) > 0 ? 'var(--red)' : 'var(--green)' ?>">
       <?= $alert_per_tipo['ROSSO'] ?? 0 ?>
     </div>
     <div class="stat-sub">aperti ora</div>
   </div>
   <div class="stat-card clickable" onclick="location.href='<?= APP_URL ?>/alert'">
     <div class="stat-label">Alert arancio</div>
-    <div class="stat-value" style="color:<?= ($alert_per_tipo['ARANCIO'] ?? 0) > 0 ? 'var(--amber)' : 'var(--green)' ?>">
+    <div class="stat-value" id="gira-count-arancio" style="color:<?= ($alert_per_tipo['ARANCIO'] ?? 0) > 0 ? 'var(--amber)' : 'var(--green)' ?>">
       <?= $alert_per_tipo['ARANCIO'] ?? 0 ?>
     </div>
     <div class="stat-sub">aperti ora</div>
@@ -57,8 +57,8 @@
         elseif (($d['minuti_silenzio'] ?? 0) > 10) { $pill_class = 'pill--muted'; $pill_label = 'Offline'; }
         $offline = ($d['minuti_silenzio'] ?? 999) > 10;
       ?>
-      <div class="table-row">
-        <span class="pill <?= $pill_class ?>" style="width:68px; flex-shrink:0;"><?= $pill_label ?></span>
+      <div class="table-row" data-device-id="<?= $d['id'] ?>">
+        <span class="pill <?= $pill_class ?> gira-stato-pill" style="width:68px; flex-shrink:0;"><?= $pill_label ?></span>
         <span class="table-row__label">
           <strong><?= htmlspecialchars($d['label'] ?? $d['mac']) ?></strong>
           <?php if ($d['area']): ?>
@@ -70,10 +70,10 @@
         </span>
         <span class="table-row__meta" style="display:flex; gap:var(--space-md); align-items:center;">
           <?php if (!$offline && $d['posizione']): ?>
-            <span style="font-size:0.72rem;"><?= $d['posizione'] ?></span>
+            <span class="gira-posizione" style="font-size:0.72rem;"><?= $d['posizione'] ?></span>
           <?php endif; ?>
           <?php if ($d['stato_batt'] !== null): ?>
-            <span style="font-size:0.72rem; color:<?= $d['stato_batt'] < 20 ? 'var(--amber)' : 'var(--muted)' ?>">
+            <span class="gira-batteria" style="font-size:0.72rem; color:<?= $d['stato_batt'] < 20 ? 'var(--amber)' : 'var(--muted)' ?>">
               🔋 <?= $d['stato_batt'] ?>%
             </span>
           <?php endif; ?>
@@ -87,5 +87,11 @@
     <?php endif; ?>
   </div>
 </div>
+
+<?php $extra_js = '<script src="' . APP_URL . '/assets/js/polling.js"></script>
+<script>
+const POLLING_INTERVAL = <?= POLLING_INTERVAL ?>;
+GiraPolling.avvia("dashboard-admin");
+</script>'; ?>
 
 <?php include VIEW_PATH . 'layout/footer.php'; ?>

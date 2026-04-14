@@ -138,6 +138,7 @@ require_once BASE_PATH . 'app/Controllers/UtenteController.php';
 require_once BASE_PATH . 'app/Controllers/DeviceController.php';
 require_once BASE_PATH . 'app/Controllers/UbicazioneController.php';
 require_once BASE_PATH . 'app/Controllers/AlertController.php';
+require_once BASE_PATH . 'app/Controllers/ApiController.php';
 // require_once BASE_PATH . 'app/Controllers/IngestController.php';
 // require_once BASE_PATH . 'app/Controllers/PushController.php';
 // require_once BASE_PATH . 'app/Controllers/ReportController.php';  quando decommenti qua, decommenta anche righe 283 - 286
@@ -294,6 +295,12 @@ $routes = [
         'index'   => fn() => ReportController::index(),
         'esporta' => fn() => ReportController::esporta(),
     ], */
+
+    'api' => [
+        'alert-attivi' => fn() => ApiController::alertAttivi(),
+        'device-stati' => fn() => ApiController::deviceStati(),
+        'contatori'    => fn() => ApiController::contatori(),
+    ],
 
 ];
 

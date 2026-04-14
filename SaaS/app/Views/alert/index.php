@@ -13,7 +13,7 @@ foreach ($alert as $a) {
 <div class="page-header">
   <div>
     <h1>Alert attivi</h1>
-    <div class="page-header-sub"><?= count($alert) ?> alert apert<?= count($alert) === 1 ? 'o' : 'i' ?></div>
+    <div class="page-header-sub" id="gira-alert-count"><?= count($alert) ?> alert apert<?= count($alert) === 1 ? 'o' : 'i' ?></div>
   </div>
   <a href="<?= APP_URL ?>/alert/storico" class="btn btn--outline">Storico →</a>
 </div>
@@ -34,7 +34,7 @@ foreach ($alert as $a) {
   ?>
   <div class="stat-card">
     <div class="stat-label"><?= $label ?></div>
-    <div class="stat-value" style="font-size:1.8rem; color:<?= str_contains($pill, 'red') ? 'var(--red)' : (str_contains($pill, 'warn') ? 'var(--amber)' : 'var(--muted)') ?>">
+    <div class="stat-value" id="gira-count-tipo-<?= strtolower($tipo) ?>" style="font-size:1.8rem; color:<?= str_contains($pill, 'red') ? 'var(--red)' : (str_contains($pill, 'warn') ? 'var(--amber)' : 'var(--muted)') ?>">
       <?= $per_tipo[$tipo] ?>
     </div>
   </div>
@@ -43,7 +43,7 @@ foreach ($alert as $a) {
 <?php endif; ?>
 
 <!-- Lista alert -->
-<div class="table-stack">
+<div class="table-stack" id="gira-alert-list">
   <?php if (empty($alert)): ?>
     <div class="table-row" style="padding:var(--space-xl); justify-content:center;">
       <span style="color:var(--green); font-size:0.9rem;">✓ Nessun alert aperto</span>
@@ -62,7 +62,7 @@ foreach ($alert as $a) {
         default    => '',
       };
     ?>
-    <div class="table-row" style="<?= $row_bg ?>">
+    <div class="table-row" data-alert-id="<?= $a['id'] ?>" style="<?= $row_bg ?>">
 
       <!-- Tipo -->
       <span class="pill <?= $pill_class ?>" style="width:76px; flex-shrink:0;">
@@ -85,7 +85,7 @@ foreach ($alert as $a) {
       </span>
 
       <!-- Durata -->
-      <span class="table-row__meta" style="min-width:60px;">
+      <span class="table-row__meta gira-minuti" style="min-width:60px;">
         <?= $a['minuti_aperti'] ?> min
       </span>
 
@@ -125,3 +125,9 @@ foreach ($alert as $a) {
     <?php endforeach; ?>
   <?php endif; ?>
 </div>
+
+<?php $extra_js = '<script src="' . APP_URL . '/assets/js/polling.js"></script>
+<script>
+const POLLING_INTERVAL = <?= POLLING_INTERVAL ?>;
+GiraPolling.avvia("alert");
+</script>'; ?>

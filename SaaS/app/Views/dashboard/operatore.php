@@ -26,8 +26,8 @@
       elseif ($d['alert_tipo'] === 'ARANCIO')  { $pill_class = 'pill--warn'; $pill_label = 'Arancio'; }
       elseif ($offline)                        { $pill_class = 'pill--muted'; $pill_label = 'Offline'; }
     ?>
-    <div class="table-row" style="<?= $d['alert_tipo'] === 'PULSANTE' ? 'background:rgba(224,92,92,0.06);' : '' ?>">
-      <span class="pill <?= $pill_class ?>" style="width:72px; flex-shrink:0;"><?= $pill_label ?></span>
+    <div class="table-row" data-device-id="<?= $d['id'] ?>" style="<?= $d['alert_tipo'] === 'PULSANTE' ? 'background:rgba(224,92,92,0.06);' : '' ?>">
+      <span class="pill <?= $pill_class ?> gira-stato-pill" style="width:72px; flex-shrink:0;"><?= $pill_label ?></span>
 
       <span class="table-row__label">
         <strong><?= htmlspecialchars($d['label'] ?? $d['mac']) ?></strong>
@@ -41,17 +41,17 @@
 
       <span class="table-row__meta" style="display:flex; gap:var(--space-md); align-items:center;">
         <?php if (!$offline && $d['posizione']): ?>
-          <span style="font-size:0.72rem; color:var(--text);"><?= $d['posizione'] ?></span>
+          <span class="gira-posizione" style="font-size:0.72rem; color:var(--text);"><?= $d['posizione'] ?></span>
         <?php elseif ($offline): ?>
           <span style="font-size:0.72rem; color:var(--muted);">Nessun segnale</span>
         <?php endif; ?>
 
         <?php if ($d['alert_minuti'] !== null): ?>
-          <span style="font-size:0.72rem; color:var(--muted);"><?= $d['alert_minuti'] ?> min</span>
+          <span class="gira-minuti" style="font-size:0.72rem; color:var(--muted);"><?= $d['alert_minuti'] ?> min</span>
         <?php endif; ?>
 
         <?php if ($d['stato_batt'] !== null): ?>
-          <span style="font-size:0.72rem; color:<?= $d['stato_batt'] < 20 ? 'var(--amber)' : 'var(--muted)' ?>">
+          <span class="gira-batteria" style="font-size:0.72rem; color:<?= $d['stato_batt'] < 20 ? 'var(--amber)' : 'var(--muted)' ?>">
             🔋 <?= $d['stato_batt'] ?>%
           </span>
         <?php endif; ?>
@@ -67,5 +67,11 @@
     <?php endforeach; ?>
   </div>
 <?php endif; ?>
+
+<?php $extra_js = '<script src="' . APP_URL . '/assets/js/polling.js"></script>
+<script>
+const POLLING_INTERVAL = <?= POLLING_INTERVAL ?>;
+GiraPolling.avvia("dashboard-operatore");
+</script>'; ?>
 
 <?php include VIEW_PATH . 'layout/footer.php'; ?>
