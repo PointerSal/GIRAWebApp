@@ -12,23 +12,47 @@
   <a href="<?= APP_URL ?>/utenti/crea" class="btn btn--primary">+ Nuovo utente</a>
 </div>
 
-<!-- Filtro struttura (solo superadmin) -->
-<?php if (Auth::isSuperadmin() && !empty($strutture_map)): ?>
-<div class="flex-center gap-sm" style="margin-bottom:var(--space-lg); flex-wrap:wrap;">
-  <a href="<?= APP_URL ?>/utenti"
-     class="btn btn--outline"
-     <?= !$filtro_struttura ? 'style="color:var(--green); border-color:var(--green);"' : '' ?>>
-    Tutti
-  </a>
-  <?php foreach ($strutture_map as $sid => $snome): ?>
-    <a href="<?= APP_URL ?>/utenti?id_struttura=<?= $sid ?>"
-       class="btn btn--outline"
-       <?= $filtro_struttura === (int)$sid ? 'style="color:var(--green); border-color:var(--green);"' : '' ?>>
-      <?= htmlspecialchars($snome) ?>
-    </a>
-  <?php endforeach; ?>
+<!-- Filtri: struttura (select) + ruolo (bottoni) -->
+<div style="display:inline-flex; flex-direction:column; align-items:flex-start; gap:var(--space-sm); margin-bottom:var(--space-lg);">
+
+  <?php if (Auth::isSuperadmin() && !empty($strutture_map)): ?>
+  <select id="filtro-struttura"
+          onchange="location.href='<?= APP_URL ?>/utenti?id_struttura='+this.value+'&id_ruolo=<?= $filtro_ruolo ?>'"
+          style="background:var(--surface); border:1px solid var(--border); color:var(--text);
+                 font-family:var(--font-mono); font-size:0.72rem; padding:6px 12px;
+                 border-radius:var(--radius-sm); cursor:pointer; width:100%;">
+    <option value="0">Tutte le strutture</option>
+    <?php foreach ($strutture_map as $sid => $snome): ?>
+      <option value="<?= $sid ?>" <?= $filtro_struttura === (int)$sid ? 'selected' : '' ?>>
+        <?= htmlspecialchars($snome) ?>
+      </option>
+    <?php endforeach; ?>
+  </select>
+  <?php endif; ?>
+
+  <div class="flex-center gap-sm">
+    <?php
+      $ruoli_filtro = [
+        0                => 'Tutti',
+        RUOLO_SUPERADMIN => 'Superadmin',
+        RUOLO_ADMIN      => 'Admin',
+        RUOLO_MEDICO     => 'Medico',
+        RUOLO_UTENTE     => 'Operatore',
+      ];
+      foreach ($ruoli_filtro as $rid => $rlabel):
+        $url_ruolo = APP_URL . '/utenti?' .
+          ($filtro_struttura ? 'id_struttura=' . $filtro_struttura . '&' : '') .
+          'id_ruolo=' . $rid;
+    ?>
+      <a href="<?= $url_ruolo ?>"
+         class="btn btn--outline"
+         style="font-size:0.7rem; <?= $filtro_ruolo === $rid ? 'color:var(--green); border-color:var(--green);' : '' ?>">
+        <?= $rlabel ?>
+      </a>
+    <?php endforeach; ?>
+  </div>
+
 </div>
-<?php endif; ?>
 
 <!-- Lista utenti -->
 <div class="table-stack">
@@ -42,15 +66,19 @@
 
       <span class="status-dot <?= $u['attivo'] ? 'status-dot--ok' : 'status-dot--off' ?>"></span>
 
+      <!-- Ruolo + Nome + Mail -->
       <span class="table-row__label">
         <strong><?= htmlspecialchars($u['nome'] . ' ' . $u['cognome']) ?></strong>
-        <span style="color:var(--muted); font-size:0.72rem; margin-left:8px;">
+        <span class="pill pill--muted" style="font-size:0.6rem; padding:2px 7px; margin-left:6px; vertical-align:middle;">
+          <?= htmlspecialchars($u['ruolo_nome']) ?>
+        </span>
+        <br/>
+        <span style="color:var(--muted); font-size:0.72rem;">
           <?= htmlspecialchars($u['mail']) ?>
         </span>
       </span>
 
-      <span class="pill pill--muted"><?= htmlspecialchars($u['ruolo_nome']) ?></span>
-
+      <!-- Strutture -->
       <?php if ($u['strutture']): ?>
         <span class="table-row__meta" style="max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
               title="<?= htmlspecialchars($u['strutture']) ?>">
@@ -60,20 +88,18 @@
         <span class="table-row__meta" style="color:var(--muted);">— nessuna struttura</span>
       <?php endif; ?>
 
+      <!-- Azioni: Device | Modifica | Password -->
       <div class="flex-center gap-sm">
+        <?php if ((int)$u['id_ruolo'] === RUOLO_UTENTE): ?>
+          <a href="<?= APP_URL ?>/utenti/device-assegnati/<?= $u['id'] ?>"
+             class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px; color:var(--green); border-color:var(--green);">Device</a>
+        <?php else: ?>
+          <span style="display:inline-block; width:52px;"></span><!-- placeholder allineamento -->
+        <?php endif; ?>
         <a href="<?= APP_URL ?>/utenti/modifica/<?= $u['id'] ?>"
            class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">Modifica</a>
         <a href="<?= APP_URL ?>/utenti/reset-pwd/<?= $u['id'] ?>"
            class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">Password</a>
-        <?php if ((int)$u['id_ruolo'] === RUOLO_UTENTE): ?>
-          <a href="<?= APP_URL ?>/utenti/device-assegnati/<?= $u['id'] ?>"
-             class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">Device</a>
-        <?php endif; ?>
-        <?php if ($u['id'] !== Auth::id()): ?>
-          <a href="<?= APP_URL ?>/utenti/elimina/<?= $u['id'] ?>"
-             class="btn btn--danger" style="font-size:0.68rem; padding:3px 10px;"
-             onclick="return confirm('Disattivare questo utente?')">Disattiva</a>
-        <?php endif; ?>
       </div>
 
     </div>

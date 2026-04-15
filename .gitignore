@@ -14,3 +14,4 @@ config.php
 
 # Se vuoi escludere tutti i file PHP che iniziano con 'config' (es. config.db.php)
 config*.php
+*.sql
