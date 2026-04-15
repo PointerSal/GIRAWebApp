@@ -19,7 +19,7 @@
       <?php
       $pill_class = 'pill--ok';
       $pill_label = 'OK';
-      $offline = ($d['minuti_silenzio'] ?? 999) > 10;
+      $offline = $d['ultimo_contatto'] === null || ($d['minuti_silenzio'] ?? 999) > 10;
 
       if ($d['alert_tipo'] === 'PULSANTE') {
         $pill_class = 'pill--red';
@@ -93,7 +93,7 @@
 
 <?php $extra_js = '<script src="' . APP_URL . '/assets/js/polling.js"></script>
 <script>
-const POLLING_INTERVAL = <?= POLLING_INTERVAL ?>;
+const POLLING_INTERVAL = ' . POLLING_INTERVAL . ';
 GiraPolling.avvia("dashboard-operatore");
 </script>'; ?>
 

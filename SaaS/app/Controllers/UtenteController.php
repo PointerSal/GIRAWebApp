@@ -162,7 +162,6 @@ class UtenteController
             $_SESSION['successo'] = 'Utente creato. Al primo accesso dovrà cambiare la password.';
             header('Location: ' . APP_URL . '/utenti');
             exit;
-
         } catch (\Throwable $e) {
             $db->rollBack();
             $msg = str_contains($e->getMessage(), 'uq_mail')
@@ -249,7 +248,7 @@ class UtenteController
             // (solo se superadmin o admin può cambiare strutture)
             if (Auth::isAdmin()) {
                 $db->prepare('DELETE FROM gir_utente_struttura WHERE id_utente = :uid')
-                   ->execute([':uid' => $id]);
+                    ->execute([':uid' => $id]);
                 foreach ($dati['strutture_ids'] as $sid) {
                     $db->prepare(
                         'INSERT IGNORE INTO gir_utente_struttura (id_utente, id_struttura)
@@ -263,7 +262,6 @@ class UtenteController
             $_SESSION['successo'] = 'Utente aggiornato.';
             header('Location: ' . APP_URL . '/utenti');
             exit;
-
         } catch (\Throwable $e) {
             $db->rollBack();
             $msg = str_contains($e->getMessage(), 'uq_mail')
@@ -437,11 +435,11 @@ class UtenteController
         self::_verifica_accesso($target);
 
         // Solo per operatori
-        if ((int)$target['id_ruolo'] !== RUOLO_UTENTE) {
-            $_SESSION['errore'] = 'L\'assegnazione device è disponibile solo per gli operatori.';
-            header('Location: ' . APP_URL . '/utenti');
-            exit;
-        }
+        // if ((int)$target['id_ruolo'] !== RUOLO_UTENTE) {
+        //     $_SESSION['errore'] = 'L\'assegnazione device è disponibile solo per gli operatori.';
+        //     header('Location: ' . APP_URL . '/utenti');
+        //     exit;
+        // }
 
         $db = Database::getInstance();
 
@@ -495,7 +493,7 @@ class UtenteController
 
         // Sostituisci tutte le assegnazioni
         $db->prepare('DELETE FROM gir_utente_device WHERE id_utente = :uid')
-           ->execute([':uid' => $id]);
+            ->execute([':uid' => $id]);
 
         foreach ($device_ids as $did) {
             $db->prepare(
@@ -601,7 +599,7 @@ class UtenteController
             'id_ruolo'     => $id_ruolo,
             'password'     => $password,
             'attivo'       => $attivo,
-            'strutture_ids'=> $strutture_ids,
+            'strutture_ids' => $strutture_ids,
         ];
     }
 

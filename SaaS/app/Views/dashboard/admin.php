@@ -50,6 +50,7 @@
     <?php else: ?>
       <?php foreach ($device_stato as $d): ?>
         <?php
+        $offline    = $d['ultimo_contatto'] === null || ($d['minuti_silenzio'] ?? 999) > 10;
         $pill_class = 'pill--ok';
         $pill_label = 'OK';
         if ($d['alert_tipo'] === 'ROSSO') {
@@ -58,11 +59,10 @@
         } elseif ($d['alert_tipo'] === 'ARANCIO') {
           $pill_class = 'pill--warn';
           $pill_label = 'Arancio';
-        } elseif (($d['minuti_silenzio'] ?? 0) > 10) {
+        } elseif ($offline) {
           $pill_class = 'pill--muted';
           $pill_label = 'Offline';
         }
-        $offline = ($d['minuti_silenzio'] ?? 999) > 10;
         ?>
         <div class="table-row" data-device-id="<?= $d['id'] ?>">
           <span class="pill <?= $pill_class ?> gira-stato-pill" style="width:68px; flex-shrink:0;"><?= $pill_label ?></span>

@@ -111,7 +111,7 @@ const GiraPolling = (() => {
                     // Aggiorna pill stato
                     const pill = riga.querySelector('.gira-stato-pill');
                     if (pill) {
-                        const offline = (d.minuti_silenzio ?? 999) > 10;
+                        const offline = d.ultimo_contatto === null || (d.minuti_silenzio ?? 999) > 10;
                         if (d.alert_tipo === 'PULSANTE') {
                             pill.className = 'pill pill--red gira-stato-pill';
                             pill.textContent = '🆘 SOS';

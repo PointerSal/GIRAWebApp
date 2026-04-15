@@ -1,4 +1,4 @@
-// AssetTrack — Service Worker minimale
+// GIRA — Service Worker minimale
 // Serve solo per soddisfare il requisito PWA installabile.
 // Nessuna cache offline: tutto passa sempre dal server.
 
@@ -14,5 +14,9 @@ self.addEventListener('activate', e => {
 
 // Strategia: network-first, nessuna cache
 self.addEventListener('fetch', e => {
-    e.respondWith(fetch(e.request));
+    e.respondWith(
+        fetch(e.request).catch(() => {
+            // ignora errori di rete silenziosamente
+        })
+    );
 });
