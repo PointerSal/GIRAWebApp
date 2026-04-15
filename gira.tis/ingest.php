@@ -14,7 +14,9 @@ declare(strict_types=1);
 //     c. Scrive dati grezzi in gir_raw (ultimi 24h)
 //     d. Calcola posizione (SUPINO / LATO_A / LATO_B / PRONO)
 //     e. Aggiorna gir_device_stato
-//     f. Gestisce cambio posizione con isteresi in gir_posizione_log
+//     f. Gestisce cambio posizione con doppia isteresi:
+//        - campioni degli ultimi MIN_POSIZIONE_MINUTI minuti
+//        - almeno SOGLIA_CONFERMA_PERC% devono concordare con la nuova posizione
 //     g. Analizza durata posizione attuale → genera alert se necessario
 // ============================================================
 
@@ -114,7 +116,7 @@ foreach ($data['devices'] as $dev) {
     $pulsante = (int)($stato & 0x01);
 
     // ── c. Scrivi dati grezzi (gir_raw) ─────────────────────
-    // Solo ultimi 24h — il cron notturno pulisce
+    // Serve per l'isteresi temporale — pulizia automatica in gestisci_posizione()
     $db->prepare(
         "INSERT INTO gir_raw (id_device, x, y, z, ricevuto_alle)
          VALUES (:id, :x, :y, :z, NOW())"
@@ -144,8 +146,8 @@ foreach ($data['devices'] as $dev) {
         ':pulsante' => $pulsante,
     ]);
 
-    // ── f. Gestione cambio posizione con isteresi ────────────
-    gestisci_posizione($db, $idDevice, $posizione, $campConferma);
+    // ── f. Gestione cambio posizione con doppia isteresi ────
+    gestisci_posizione($db, $idDevice, $posizione);
 
     // ── g. Analisi alert ─────────────────────────────────────
     analizza_alert(
@@ -176,15 +178,14 @@ respond(200, ['ok' => true]);
  */
 function calcola_posizione(int $x, int $y, int $z): string
 {
-    // Asse Z — supino/prono
+    // Asse Z — supino/prono (soglia confermata dai dati reali)
     if ($z >  700) return 'SUPINO';
     if ($z < -700) return 'PRONO';
 
-    // Piano XY — modulo per rilevare fianco
+    // Piano XY — soglia alzata da 500 a 700 (confermata dai dati reali)
     $moduloXY = sqrt($x ** 2 + $y ** 2);
 
-    if ($moduloXY > 500) {
-        // Asse dominante determina LATO_A o LATO_B
+    if ($moduloXY > 700) {
         if (abs($x) >= abs($y)) {
             return $x > 0 ? 'LATO_A' : 'LATO_B';
         } else {
@@ -192,19 +193,20 @@ function calcola_posizione(int $x, int $y, int $z): string
         }
     }
 
-    // Zona grigia
+    // Zona grigia — include transizioni e posizione seduta
     return 'SCONOSCIUTO';
 }
 
 
 /**
- * Gestisce il cambio posizione con isteresi temporale.
- * Il cambio viene confermato solo dopo N campioni consecutivi
- * con la stessa posizione (campioni_conferma in gir_soglie).
+ * Gestisce il cambio posizione con doppia isteresi:
+ * 1. TEMPORALE  — guarda tutti i campioni grezzi degli ultimi MIN_POSIZIONE_MINUTI minuti
+ * 2. PERCENTUALE — almeno SOGLIA_CONFERMA_PERC% dei campioni deve concordare
  *
- * Usa gir_raw per contare i campioni recenti della nuova posizione.
+ * Questo elimina i falsi cambi causati da rumore del sensore.
+ * Dopo ogni cambio confermato pulisce gir_raw dei dati non più necessari.
  */
-function gestisci_posizione(PDO $db, int $idDevice, string $nuovaPos, int $campConferma): void
+function gestisci_posizione(PDO $db, int $idDevice, string $nuovaPos): void
 {
     // SCONOSCIUTO → zona grigia, non aggiornare il log
     if ($nuovaPos === 'SCONOSCIUTO') return;
@@ -220,7 +222,7 @@ function gestisci_posizione(PDO $db, int $idDevice, string $nuovaPos, int $campC
     $corrente->execute([':id' => $idDevice]);
     $corrente = $corrente->fetch();
 
-    // Se nessun record aperto → apri il primo
+    // Nessun record aperto → apri il primo
     if (!$corrente) {
         apri_posizione($db, $idDevice, $nuovaPos);
         return;
@@ -229,31 +231,23 @@ function gestisci_posizione(PDO $db, int $idDevice, string $nuovaPos, int $campC
     // Posizione invariata → nessuna azione
     if ($corrente['posizione'] === $nuovaPos) return;
 
-    // Posizione diversa → verifica isteresi:
-    // conta quanti degli ultimi N campioni grezzi hanno la nuova posizione
-    $campioni = $db->prepare(
-        "SELECT COUNT(*) AS n
-         FROM (
-             SELECT x, y, z FROM gir_raw
-             WHERE id_device = :id
-             ORDER BY ricevuto_alle DESC
-             LIMIT :n
-         ) AS ultimi"
-    );
-    $campioni->execute([':id' => $idDevice, ':n' => $campConferma]);
-    $campioni = (int)($campioni->fetch()['n'] ?? 0);
+    // ── DOPPIA ISTERESI ──────────────────────────────────────
 
-    // Conta quanti di quei campioni corrispondono alla nuova posizione
-    // (ricalcola posizione per ognuno)
+    // Recupera tutti i campioni degli ultimi MIN_POSIZIONE_MINUTI minuti
     $recenti = $db->prepare(
         "SELECT x, y, z FROM gir_raw
-         WHERE id_device = :id
-         ORDER BY ricevuto_alle DESC
-         LIMIT :n"
+          WHERE id_device = :id
+            AND ricevuto_alle >= DATE_SUB(NOW(), INTERVAL :minuti MINUTE)
+          ORDER BY ricevuto_alle DESC"
     );
-    $recenti->execute([':id' => $idDevice, ':n' => $campConferma]);
+    $recenti->execute([':id' => $idDevice, ':minuti' => MIN_POSIZIONE_MINUTI]);
     $recenti = $recenti->fetchAll();
 
+    // TODO: se count($recenti) è troppo basso → potenziale alert diagnostico
+    // "device invia troppo pochi campioni" — da implementare
+    if (empty($recenti)) return;
+
+    // Conta quanti campioni concordano con la nuova posizione
     $conferme = 0;
     foreach ($recenti as $r) {
         if (calcola_posizione((int)$r['x'], (int)$r['y'], (int)$r['z']) === $nuovaPos) {
@@ -261,19 +255,30 @@ function gestisci_posizione(PDO $db, int $idDevice, string $nuovaPos, int $campC
         }
     }
 
-    // Cambio confermato solo se TUTTI gli ultimi N campioni concordano
-    if ($conferme < $campConferma) return;
+    // Verifica soglia percentuale
+    $perc = ($conferme / count($recenti)) * 100;
+    if ($perc < SOGLIA_CONFERMA_PERC) return; // troppo rumore → cambio scartato
+
+    // ── CAMBIO CONFERMATO ────────────────────────────────────
 
     // Chiudi record corrente
     $db->prepare(
         "UPDATE gir_posizione_log
-         SET terminato_alle  = NOW(),
-             durata_minuti   = GREATEST(1, TIMESTAMPDIFF(MINUTE, iniziato_alle, NOW()))
+         SET terminato_alle = NOW(),
+             durata_minuti  = GREATEST(1, TIMESTAMPDIFF(MINUTE, iniziato_alle, NOW()))
          WHERE id = :id"
     )->execute([':id' => $corrente['id']]);
 
     // Apri nuovo record
     apri_posizione($db, $idDevice, $nuovaPos);
+
+    // Pulizia gir_raw — tieni solo gli ultimi MIN_POSIZIONE_MINUTI+1 minuti
+    // (non serve conservare dati più vecchi)
+    $db->prepare(
+        "DELETE FROM gir_raw
+          WHERE id_device = :id
+            AND ricevuto_alle < DATE_SUB(NOW(), INTERVAL :minuti MINUTE)"
+    )->execute([':id' => $idDevice, ':minuti' => MIN_POSIZIONE_MINUTI + 1]);
 }
 
 function apri_posizione(PDO $db, int $idDevice, string $posizione): void
@@ -310,25 +315,27 @@ function analizza_alert(
         apri_alert_se_assente($db, $idDevice, 'BATTERIA', null);
     }
 
-    // ── Immobilità (solo se SUPINO) ──────────────────────────
-    // Analizza solo la posizione supina — è quella a rischio piaghe
-    if ($posizione !== 'SUPINO') {
-        // Se c'era un alert di immobilità aperto → chiudilo
+    // A — SUPINO + PRONO + SCONOSCIUTO
+    $posizioni_a_rischio = ['SUPINO', 'PRONO', 'SCONOSCIUTO'];
+
+    if (!in_array($posizione, $posizioni_a_rischio)) {
         chiudi_alert_immobilita($db, $idDevice);
         return;
     }
 
-    // Leggi da quanto è supino (record aperto in gir_posizione_log)
+    // Il record POSIZIONE deve essere confermato da almeno MIN_POSIZIONE_MINUTI
+    // per evitare alert generati su posizioni non ancora validate
     $log = $db->prepare(
         "SELECT TIMESTAMPDIFF(MINUTE, iniziato_alle, NOW()) AS minuti
-         FROM gir_posizione_log
-         WHERE id_device = :id
-           AND posizione = 'SUPINO'
-           AND terminato_alle IS NULL
-         ORDER BY iniziato_alle DESC
-         LIMIT 1"
+     FROM gir_posizione_log
+     WHERE id_device = :id
+       AND posizione = :posizione
+       AND terminato_alle IS NULL
+       AND iniziato_alle <= DATE_SUB(NOW(), INTERVAL :min_conf MINUTE)
+     ORDER BY iniziato_alle DESC
+     LIMIT 1"
     );
-    $log->execute([':id' => $idDevice]);
+    $log->execute([':id' => $idDevice, ':posizione' => $posizione, ':min_conf' => MIN_POSIZIONE_MINUTI]);
     $log = $log->fetch();
 
     if (!$log) return;
