@@ -46,7 +46,7 @@
     ?>
       <a href="<?= $url_ruolo ?>"
          class="btn btn--outline"
-         style="font-size:0.7rem; <?= $filtro_ruolo === $rid ? 'color:var(--green); border-color:var(--green);' : '' ?>">
+         style="font-size:0.68rem; padding:4px 10px; <?= $filtro_ruolo === $rid ? 'color:var(--green); border-color:var(--green);' : '' ?>">
         <?= $rlabel ?>
       </a>
     <?php endforeach; ?>
