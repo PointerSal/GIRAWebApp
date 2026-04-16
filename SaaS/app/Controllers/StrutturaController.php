@@ -292,6 +292,125 @@ class StrutturaController
     }
 
     // ----------------------------------------------------------
+    //  GET /strutture/soglie/{id}
+    //  Superadmin — configura soglie e silenzio notturno
+    // ----------------------------------------------------------
+    public static function soglie(?int $id): void
+    {
+        Middleware::richiediSuperadmin();
+        $struttura = self::_trova($id);
+
+        $db    = Database::getInstance();
+        $soglie = $db->prepare('SELECT * FROM gir_soglie WHERE id_struttura = :id LIMIT 1');
+        $soglie->execute([':id' => $id]);
+        $soglie = $soglie->fetch();
+
+        // Se non esiste ancora, crea con default
+        if (!$soglie) {
+            $db->prepare('INSERT INTO gir_soglie (id_struttura) VALUES (:id)')->execute([':id' => $id]);
+            $soglie = $db->prepare('SELECT * FROM gir_soglie WHERE id_struttura = :id LIMIT 1');
+            $soglie->execute([':id' => $id]);
+            $soglie = $soglie->fetch();
+        }
+
+        $errore   = $_SESSION['errore']   ?? null;
+        $successo = $_SESSION['successo'] ?? null;
+        unset($_SESSION['errore'], $_SESSION['successo']);
+
+        $page_title   = 'Soglie — ' . htmlspecialchars($struttura['ragione_sociale']);
+        $current_page = 'strutture';
+        include VIEW_PATH . 'layout/header.php';
+        include VIEW_PATH . 'strutture/soglie.php';
+        include VIEW_PATH . 'layout/footer.php';
+    }
+
+    // ----------------------------------------------------------
+    //  POST /strutture/soglie-post
+    // ----------------------------------------------------------
+    public static function sogliePost(): void
+    {
+        Middleware::richiediSuperadmin();
+
+        $id              = (int)($_POST['id_struttura'] ?? 0);
+        $arancio_min     = (int)($_POST['soglia_arancio_min'] ?? 20);
+        $rosso_min       = (int)($_POST['soglia_rosso_min']   ?? 30);
+        $silenzio_da     = (int)($_POST['silenzio_da']        ?? 22);
+        $silenzio_a      = (int)($_POST['silenzio_a']         ?? 7);
+        $arancio_min_min = (int)($_POST['arancio_min_min']    ?? 10);
+        $arancio_min_max = (int)($_POST['arancio_min_max']    ?? 30);
+        $rosso_min_min   = (int)($_POST['rosso_min_min']      ?? 20);
+        $rosso_min_max   = (int)($_POST['rosso_min_max']      ?? 60);
+        $silenzio_da_min = (int)($_POST['silenzio_da_min']    ?? 20);
+        $silenzio_da_max = (int)($_POST['silenzio_da_max']    ?? 23);
+        $silenzio_a_min  = (int)($_POST['silenzio_a_min']     ?? 5);
+        $silenzio_a_max  = (int)($_POST['silenzio_a_max']     ?? 9);
+
+        self::_trova($id);
+
+        // Validazione — evita overlap
+        if ($rosso_min < $arancio_min + 5) {
+            $_SESSION['errore'] = 'La soglia rossa deve essere almeno 5 minuti maggiore della soglia arancio.';
+            header('Location: ' . APP_URL . '/strutture/soglie/' . $id);
+            exit;
+        }
+
+        // Validazione range
+        if ($arancio_min < $arancio_min_min || $arancio_min > $arancio_min_max) {
+            $_SESSION['errore'] = "Soglia arancio deve essere tra {$arancio_min_min} e {$arancio_min_max} minuti.";
+            header('Location: ' . APP_URL . '/strutture/soglie/' . $id);
+            exit;
+        }
+        if ($rosso_min < $rosso_min_min || $rosso_min > $rosso_min_max) {
+            $_SESSION['errore'] = "Soglia rossa deve essere tra {$rosso_min_min} e {$rosso_min_max} minuti.";
+            header('Location: ' . APP_URL . '/strutture/soglie/' . $id);
+            exit;
+        }
+
+        Database::getInstance()->prepare(
+            'INSERT INTO gir_soglie
+                (id_struttura, soglia_arancio_min, soglia_rosso_min,
+                 silenzio_da, silenzio_a,
+                 arancio_min_min, arancio_min_max,
+                 rosso_min_min, rosso_min_max,
+                 silenzio_da_min, silenzio_da_max,
+                 silenzio_a_min, silenzio_a_max)
+             VALUES (:id, :ar, :ro, :sda, :sa, :armin, :armax, :romin, :romax,
+                     :sdamin, :sdamax, :samin, :samax)
+             ON DUPLICATE KEY UPDATE
+                soglia_arancio_min = VALUES(soglia_arancio_min),
+                soglia_rosso_min   = VALUES(soglia_rosso_min),
+                silenzio_da        = VALUES(silenzio_da),
+                silenzio_a         = VALUES(silenzio_a),
+                arancio_min_min    = VALUES(arancio_min_min),
+                arancio_min_max    = VALUES(arancio_min_max),
+                rosso_min_min      = VALUES(rosso_min_min),
+                rosso_min_max      = VALUES(rosso_min_max),
+                silenzio_da_min    = VALUES(silenzio_da_min),
+                silenzio_da_max    = VALUES(silenzio_da_max),
+                silenzio_a_min     = VALUES(silenzio_a_min),
+                silenzio_a_max     = VALUES(silenzio_a_max)'
+        )->execute([
+            ':id'     => $id,
+            ':ar'     => $arancio_min,
+            ':ro'     => $rosso_min,
+            ':sda'    => $silenzio_da,
+            ':sa'     => $silenzio_a,
+            ':armin'  => $arancio_min_min,
+            ':armax'  => $arancio_min_max,
+            ':romin'  => $rosso_min_min,
+            ':romax'  => $rosso_min_max,
+            ':sdamin' => $silenzio_da_min,
+            ':sdamax' => $silenzio_da_max,
+            ':samin'  => $silenzio_a_min,
+            ':samax'  => $silenzio_a_max,
+        ]);
+
+        $_SESSION['successo'] = 'Soglie aggiornate.';
+        header('Location: ' . APP_URL . '/strutture/soglie/' . $id);
+        exit;
+    }
+
+    // ----------------------------------------------------------
     //  GET /strutture/elimina/{id}
     //  Soft delete — disattiva invece di cancellare
     // ----------------------------------------------------------

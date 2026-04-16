@@ -77,7 +77,9 @@ foreach ($data['devices'] as $dev) {
         "SELECT d.id, d.id_struttura,
                 COALESCE(s.soglia_arancio_min, :def_arancio) AS soglia_arancio,
                 COALESCE(s.soglia_rosso_min,   :def_rosso)   AS soglia_rosso,
-                COALESCE(s.campioni_conferma,  :def_camp)    AS campioni_conferma
+                COALESCE(s.campioni_conferma,  :def_camp)    AS campioni_conferma,
+                COALESCE(s.silenzio_da,        :def_sil_da)  AS silenzio_da,
+                COALESCE(s.silenzio_a,         :def_sil_a)   AS silenzio_a
          FROM gir_device d
          LEFT JOIN gir_soglie s ON s.id_struttura = d.id_struttura
          WHERE d.mac = :mac AND d.attivo = 1
@@ -88,14 +90,18 @@ foreach ($data['devices'] as $dev) {
         ':def_arancio' => ALERT_ARANCIO_MIN,
         ':def_rosso'   => ALERT_ROSSO_MIN,
         ':def_camp'    => 3,
+        ':def_sil_da'  => 22,
+        ':def_sil_a'   => 7,
     ]);
     $device = $device->fetch();
     if (!$device) continue; // MAC non registrato o disattivato
 
-    $idDevice    = (int)$device['id'];
+    $idDevice     = (int)$device['id'];
     $sogliArancio = (int)$device['soglia_arancio'];
     $sogliaRosso  = (int)$device['soglia_rosso'];
     $campConferma = (int)$device['campioni_conferma'];
+    $silenzioDa   = (int)$device['silenzio_da'];
+    $silenzioA    = (int)$device['silenzio_a'];
 
     // ── b. Decodifica payload BLE ────────────────────────────
     $bytes = hex_to_bytes($hex);
@@ -172,7 +178,9 @@ foreach ($data['devices'] as $dev) {
         $batteria,
         $pulsante,
         $sogliArancio,
-        $sogliaRosso
+        $sogliaRosso,
+        $silenzioDa,
+        $silenzioA
     );
 }
 
@@ -308,21 +316,38 @@ function analizza_alert(
     int $batteria,
     int $pulsante,
     int $sogliArancio,
-    int $sogliaRosso
+    int $sogliaRosso,
+    int $silenzioDa,
+    int $silenzioA
 ): void {
 
     // ── Pulsante di emergenza ────────────────────────────────
+    // Il pulsante SOS non viene mai silenziato — priorità assoluta
     if ($pulsante === 1) {
         apri_alert_se_assente($db, $idDevice, 'PULSANTE', null);
-        return; // alert critico — non analizzare altro
+        return;
     }
 
     // ── Batteria scarica ─────────────────────────────────────
+    // La batteria non viene silenziata di notte
     if ($batteria > 0 && $batteria < ALERT_BATT_SOGLIA) {
         apri_alert_se_assente($db, $idDevice, 'BATTERIA', null);
     }
 
-    // A — SUPINO + PRONO + SCONOSCIUTO
+    // ── Silenzio notturno ────────────────────────────────────
+    // Durante le ore notturne non vengono generati alert di immobilità
+    $ora = (int)date('H');
+    $in_silenzio = $silenzioDa > $silenzioA
+        ? ($ora >= $silenzioDa || $ora < $silenzioA)   // es. 22→07 (attraversa mezzanotte)
+        : ($ora >= $silenzioDa && $ora < $silenzioA);  // es. 01→06 (stesso giorno)
+
+    if ($in_silenzio) {
+        // Chiudi eventuali alert immobilità aperti prima del silenzio
+        chiudi_alert_immobilita($db, $idDevice);
+        return;
+    }
+
+    // ── Posizioni a rischio ──────────────────────────────────
     $posizioni_a_rischio = ['SUPINO', 'PRONO', 'SCONOSCIUTO'];
 
     if (!in_array($posizione, $posizioni_a_rischio)) {
@@ -330,17 +355,17 @@ function analizza_alert(
         return;
     }
 
-    // Il record POSIZIONE deve essere confermato da almeno MIN_POSIZIONE_MINUTI
+    // La posizione deve essere stabile da almeno MIN_POSIZIONE_MINUTI
     // per evitare alert generati su posizioni non ancora validate
     $log = $db->prepare(
         "SELECT TIMESTAMPDIFF(MINUTE, iniziato_alle, NOW()) AS minuti
-     FROM gir_posizione_log
-     WHERE id_device = :id
-       AND posizione = :posizione
-       AND terminato_alle IS NULL
-       AND iniziato_alle <= DATE_SUB(NOW(), INTERVAL :min_conf MINUTE)
-     ORDER BY iniziato_alle DESC
-     LIMIT 1"
+         FROM gir_posizione_log
+         WHERE id_device = :id
+           AND posizione = :posizione
+           AND terminato_alle IS NULL
+           AND iniziato_alle <= DATE_SUB(NOW(), INTERVAL :min_conf MINUTE)
+         ORDER BY iniziato_alle DESC
+         LIMIT 1"
     );
     $log->execute([':id' => $idDevice, ':posizione' => $posizione, ':min_conf' => MIN_POSIZIONE_MINUTI]);
     $log = $log->fetch();
@@ -349,7 +374,6 @@ function analizza_alert(
     $minuti = (int)$log['minuti'];
 
     if ($minuti >= $sogliaRosso) {
-        // Scala ad alert ROSSO (chiude arancio se aperto)
         chiudi_alert_tipo($db, $idDevice, 'ARANCIO');
         apri_alert_se_assente($db, $idDevice, 'ROSSO', $minuti);
     } elseif ($minuti >= $sogliArancio) {

@@ -139,6 +139,7 @@ require_once BASE_PATH . 'app/Controllers/DeviceController.php';
 require_once BASE_PATH . 'app/Controllers/UbicazioneController.php';
 require_once BASE_PATH . 'app/Controllers/AlertController.php';
 require_once BASE_PATH . 'app/Controllers/ApiController.php';
+require_once BASE_PATH . 'app/Controllers/SoglieController.php';
 // require_once BASE_PATH . 'app/Controllers/IngestController.php';
 // require_once BASE_PATH . 'app/Controllers/PushController.php';
 // require_once BASE_PATH . 'app/Controllers/ReportController.php';  quando decommenti qua, decommenta anche righe 283 - 286
@@ -203,6 +204,14 @@ $routes = [
         'show'         => fn() => StrutturaController::show($id),
         'attiva'       => fn() => StrutturaController::attiva($id),
         'sospendi'     => fn() => StrutturaController::sospendi($id),
+        'soglie'      => fn() => StrutturaController::soglie($id),
+        'soglie-post' => fn() => StrutturaController::sogliePost(),
+    ],
+
+    // nuova sezione soglie per admin:
+    'soglie' => [
+        'index' => fn() => SoglieController::index(),
+        'salva' => fn() => SoglieController::salva(),
     ],
 
     'struttura-attiva' => [

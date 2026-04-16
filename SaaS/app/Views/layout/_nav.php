@@ -25,6 +25,7 @@ $cp = $current_page ?? '';
   <a href="<?= APP_URL ?>/device" class="<?= $cp === 'device'     ? 'attivo' : '' ?>">📡 Device</a>
   <a href="<?= APP_URL ?>/ubicazioni" class="<?= $cp === 'ubicazioni' ? 'attivo' : '' ?>">📍 Ubicazioni</a>
   <a href="<?= APP_URL ?>/utenti" class="<?= $cp === 'utenti'     ? 'attivo' : '' ?>">👥 Utenti</a>
+  <a href="<?= APP_URL ?>/soglie" class="<?= $cp === 'soglie' ? 'attivo' : '' ?>">⚙ Soglie</a>
   <a href="<?= APP_URL ?>/report" class="<?= $cp === 'report'     ? 'attivo' : '' ?>">📊 Report</a>
 
 <?php elseif (Auth::isMedico()): ?>

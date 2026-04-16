@@ -12,6 +12,8 @@
   <div class="flex-center gap-sm">
     <a href="<?= APP_URL ?>/strutture/modifica/<?= $struttura['id'] ?>"
        class="btn btn--outline">Modifica</a>
+    <a href="<?= APP_URL ?>/strutture/soglie/<?= $struttura['id'] ?>"
+       class="btn btn--outline">⚙ Soglie</a>
     <?php if ($struttura['attiva']): ?>
       <a href="<?= APP_URL ?>/strutture/sospendi/<?= $struttura['id'] ?>"
          class="btn btn--danger"
