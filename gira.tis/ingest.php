@@ -17,7 +17,8 @@ declare(strict_types=1);
 //     f. Gestisce cambio posizione con doppia isteresi:
 //        - campioni degli ultimi MIN_POSIZIONE_MINUTI minuti
 //        - almeno SOGLIA_CONFERMA_PERC% devono concordare con la nuova posizione
-//     g. Analizza durata posizione attuale → genera alert se necessario
+//     g. Pulizia gir_raw — sempre, tieni solo ultimi MIN_POSIZIONE_MINUTI+1 minuti
+//     h. Analizza durata posizione attuale → genera alert se necessario
 // ============================================================
 
 require_once __DIR__ . '/../SaaS/gira/app/Config/config.php';
@@ -149,7 +150,21 @@ foreach ($data['devices'] as $dev) {
     // ── f. Gestione cambio posizione con doppia isteresi ────
     gestisci_posizione($db, $idDevice, $posizione);
 
-    // ── g. Analisi alert ─────────────────────────────────────
+    // ── g. Pulizia gir_raw — ogni MIN_POSIZIONE_MINUTI minuti ───
+    //       Un solo file timestamp per tutti i device — molto più leggero
+    //       che fare una DELETE ad ogni campione ricevuto
+    $lock_pulizia   = sys_get_temp_dir() . '/gira_raw_clean';
+    $ultima_pulizia = file_exists($lock_pulizia) ? (int)file_get_contents($lock_pulizia) : 0;
+
+    if (time() - $ultima_pulizia >= MIN_POSIZIONE_MINUTI * 60) {
+        $db->prepare(
+            "DELETE FROM gir_raw
+              WHERE ricevuto_alle < DATE_SUB(NOW(), INTERVAL :minuti MINUTE)"
+        )->execute([':minuti' => MIN_POSIZIONE_MINUTI + 1]);
+        file_put_contents($lock_pulizia, time());
+    }
+
+    // ── h. Analisi alert ─────────────────────────────────────
     analizza_alert(
         $db,
         $idDevice,
@@ -271,14 +286,6 @@ function gestisci_posizione(PDO $db, int $idDevice, string $nuovaPos): void
 
     // Apri nuovo record
     apri_posizione($db, $idDevice, $nuovaPos);
-
-    // Pulizia gir_raw — tieni solo gli ultimi MIN_POSIZIONE_MINUTI+1 minuti
-    // (non serve conservare dati più vecchi)
-    $db->prepare(
-        "DELETE FROM gir_raw
-          WHERE id_device = :id
-            AND ricevuto_alle < DATE_SUB(NOW(), INTERVAL :minuti MINUTE)"
-    )->execute([':id' => $idDevice, ':minuti' => MIN_POSIZIONE_MINUTI + 1]);
 }
 
 function apri_posizione(PDO $db, int $idDevice, string $posizione): void

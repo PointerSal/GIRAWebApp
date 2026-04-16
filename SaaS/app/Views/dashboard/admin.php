@@ -111,7 +111,7 @@
 
 <?php $extra_js = '<script src="' . APP_URL . '/assets/js/polling.js"></script>
 <script>
-const POLLING_INTERVAL = <?= POLLING_INTERVAL ?>;
+const POLLING_INTERVAL = ' . POLLING_INTERVAL . ';
 GiraPolling.avvia("dashboard-admin");
 </script>'; ?>
 

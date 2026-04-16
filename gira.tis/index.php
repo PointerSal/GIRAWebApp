@@ -302,6 +302,17 @@ $routes = [
         'contatori'    => fn() => ApiController::contatori(),
     ],
 
+    // 'help' => fn() => (function () {
+    //     Middleware::richiediLogin();
+    //     include BASE_PATH . 'app/Views/help.php';
+    // })(),
+
+    'help' => [
+        'index' => fn() => (function () {
+            Middleware::richiediLogin();
+            include BASE_PATH . 'app/Views/help.php';
+        })(),
+    ],
 ];
 
 

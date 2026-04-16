@@ -41,7 +41,6 @@ class Auth
           LEFT JOIN gir_struttura s          ON s.id = us.id_struttura
           LEFT JOIN gir_subscription sub     ON sub.id_struttura = s.id
               WHERE u.mail = :mail
-                AND u.attivo = 1
               LIMIT 1'
         );
         $stmt->execute([':mail' => $mail]);

@@ -64,7 +64,7 @@
     <?php foreach ($utenti as $u): ?>
       <div class="table-row">
 
-        <span class="status-dot <?= $u['attivo'] ? 'status-dot--ok' : 'status-dot--off' ?>"></span>
+        <span class="status-dot <?= $u['attivo'] ? 'status-dot--ok' : 'status-dot--warn' ?>"></span>
 
         <!-- Ruolo + Nome + Mail -->
         <span class="table-row__label">

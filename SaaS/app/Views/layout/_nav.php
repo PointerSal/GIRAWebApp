@@ -42,3 +42,7 @@ $cp = $current_page ?? '';
   <a href="<?= APP_URL ?>/alert" class="<?= $cp === 'alert'      ? 'attivo' : '' ?>">🔔 Alert</a>
 
 <?php endif; ?>
+
+<!-- Guida — visibile per tutti i ruoli -->
+<div class="nav-sezione" style="margin-top:auto;"></div>
+<a href="<?= APP_URL ?>/help" class="<?= $cp === 'help' ? 'attivo' : '' ?>">❓ Guida</a>
