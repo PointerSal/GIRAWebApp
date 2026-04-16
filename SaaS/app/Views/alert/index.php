@@ -51,22 +51,31 @@ foreach ($alert as $a) {
   <?php else: ?>
     <?php foreach ($alert as $a): ?>
       <?php
-      $pill_class = match ($a['tipo']) {
-        'ROSSO', 'PULSANTE' => 'pill--red',
-        'ARANCIO', 'BATTERIA' => 'pill--warn',
-        default => 'pill--muted',
+      $bed_color = match ($a['tipo']) {
+        'PULSANTE'           => 'var(--red)',
+        'ROSSO'              => 'var(--red)',
+        'ARANCIO', 'BATTERIA' => 'var(--amber)',
+        default              => '#555',
       };
       $row_bg = match ($a['tipo']) {
         'PULSANTE' => 'background:rgba(224,92,92,0.06);',
         'ROSSO'    => 'background:rgba(224,92,92,0.03);',
         default    => '',
       };
+      $tipo_label = match ($a['tipo']) {
+        'PULSANTE' => '🆘 SOS',
+        default    => ucfirst(strtolower($a['tipo'])),
+      };
       ?>
       <div class="table-row" data-alert-id="<?= $a['id'] ?>" style="<?= $row_bg ?>">
 
-        <!-- Tipo -->
-        <span class="pill <?= $pill_class ?>" style="width:76px; flex-shrink:0;">
-          <?= $a['tipo'] === 'PULSANTE' ? '🆘 SOS' : ucfirst(strtolower($a['tipo'])) ?>
+        <!-- Icona letto colorata -->
+        <span style="width:56px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:2px;">
+          <?php $bed_size = 44;
+          include VIEW_PATH . 'layout/_bed_icon.php'; ?>
+          <span style="font-size:0.58rem; color:<?= $bed_color ?>; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">
+            <?= $tipo_label ?>
+          </span>
         </span>
 
         <!-- Device + ubicazione -->

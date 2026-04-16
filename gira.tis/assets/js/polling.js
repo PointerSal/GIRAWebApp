@@ -108,25 +108,37 @@ const GiraPolling = (() => {
                     const riga = document.querySelector('[data-device-id="' + d.id + '"]');
                     if (!riga) return;
 
-                    // Aggiorna pill stato
+                    // Calcola colore e label
+                    const offline = d.ultimo_contatto === null || (d.minuti_silenzio ?? 999) > 10;
+                    let bedColor, bedLabel;
+
+                    if (d.alert_tipo === 'PULSANTE') {
+                        bedColor = 'var(--red)';   bedLabel = '🆘 SOS';
+                    } else if (d.alert_tipo === 'ROSSO') {
+                        bedColor = 'var(--red)';   bedLabel = 'ROSSO';
+                    } else if (d.alert_tipo === 'ARANCIO') {
+                        bedColor = 'var(--amber)'; bedLabel = 'ARANCIO';
+                    } else if (offline) {
+                        bedColor = '#555';         bedLabel = 'OFFLINE';
+                    } else {
+                        bedColor = 'var(--green)'; bedLabel = 'OK';
+                    }
+
+                    // Aggiorna colore SVG (fill dei path del paziente)
                     const pill = riga.querySelector('.gira-stato-pill');
                     if (pill) {
-                        const offline = d.ultimo_contatto === null || (d.minuti_silenzio ?? 999) > 10;
-                        if (d.alert_tipo === 'PULSANTE') {
-                            pill.className = 'pill pill--red gira-stato-pill';
-                            pill.textContent = '🆘 SOS';
-                        } else if (d.alert_tipo === 'ROSSO') {
-                            pill.className = 'pill pill--red gira-stato-pill';
-                            pill.textContent = 'Rosso';
-                        } else if (d.alert_tipo === 'ARANCIO') {
-                            pill.className = 'pill pill--warn gira-stato-pill';
-                            pill.textContent = 'Arancio';
-                        } else if (offline) {
-                            pill.className = 'pill pill--muted gira-stato-pill';
-                            pill.textContent = 'Offline';
-                        } else {
-                            pill.className = 'pill pill--ok gira-stato-pill';
-                            pill.textContent = 'OK';
+                        // Aggiorna tutti i path/rect/circle colorati nel SVG
+                        pill.querySelectorAll('[fill]').forEach(el => {
+                            const fill = el.getAttribute('fill');
+                            if (!fill.startsWith('rgba') && !fill.startsWith('none') && fill !== '#d9d9d9') {
+                                el.setAttribute('fill', bedColor);
+                            }
+                        });
+                        // Aggiorna label testo
+                        const label = pill.querySelector('span');
+                        if (label) {
+                            label.textContent = bedLabel;
+                            label.style.color = bedColor;
                         }
                     }
 

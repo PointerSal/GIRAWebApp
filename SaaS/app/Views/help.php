@@ -23,12 +23,13 @@ include VIEW_PATH . 'layout/header.php';
     <a href="#ruoli"            style="color:var(--green); font-size:0.82rem;">2. Ruoli utente</a>
     <a href="#dashboard"        style="color:var(--green); font-size:0.82rem;">3. Dashboard</a>
     <a href="#alert"            style="color:var(--green); font-size:0.82rem;">4. Alert</a>
-    <a href="#device"           style="color:var(--green); font-size:0.82rem;">5. Device e sensori</a>
-    <a href="#ubicazioni"       style="color:var(--green); font-size:0.82rem;">6. Ubicazioni</a>
-    <a href="#utenti"           style="color:var(--green); font-size:0.82rem;">7. Gestione utenti</a>
-    <a href="#strutture"        style="color:var(--green); font-size:0.82rem;">8. Strutture</a>
-    <a href="#posizioni"        style="color:var(--green); font-size:0.82rem;">9. Posizioni rilevate</a>
-    <a href="#primo-accesso"    style="color:var(--green); font-size:0.82rem;">10. Primo accesso</a>
+    <a href="#soglie"           style="color:var(--green); font-size:0.82rem;">5. Soglie e silenzio notturno</a>
+    <a href="#device"           style="color:var(--green); font-size:0.82rem;">6. Device e sensori</a>
+    <a href="#ubicazioni"       style="color:var(--green); font-size:0.82rem;">7. Ubicazioni</a>
+    <a href="#utenti"           style="color:var(--green); font-size:0.82rem;">8. Gestione utenti</a>
+    <a href="#strutture"        style="color:var(--green); font-size:0.82rem;">9. Strutture</a>
+    <a href="#posizioni"        style="color:var(--green); font-size:0.82rem;">10. Posizioni rilevate</a>
+    <a href="#primo-accesso"    style="color:var(--green); font-size:0.82rem;">11. Primo accesso</a>
   </div>
 </div>
 
@@ -125,11 +126,62 @@ include VIEW_PATH . 'layout/header.php';
     💡 Gli alert di immobilità (Arancio/Rosso) si chiudono automaticamente quando il paziente
     cambia posizione. Gli alert SOS e Batteria devono essere chiusi manualmente.
   </p>
+  <p style="font-size:0.85rem; color:var(--muted); margin-top:var(--space-sm);">
+    🌙 Durante le ore di silenzio notturno gli alert di immobilità non vengono generati.
+    Gli alert SOS e Batteria rimangono sempre attivi.
+  </p>
 </div>
 
-<!-- 5. Device -->
+<!-- 5. Soglie -->
+<div class="card" id="soglie" style="margin-bottom:var(--space-xl);">
+  <p class="section-label">5. Soglie e silenzio notturno</p>
+  <p style="font-size:0.85rem; color:var(--text); line-height:1.7; margin-bottom:var(--space-md);">
+    GIRA permette di configurare le soglie di immobilità e le ore di silenzio notturno
+    per ogni struttura. La gestione è a due livelli:
+  </p>
+  <ul style="font-size:0.82rem; color:var(--text); line-height:1.9; padding-left:var(--space-lg); margin-bottom:var(--space-md);">
+    <li>
+      <strong>Superadmin</strong> — imposta i valori delle soglie e definisce il range
+      entro cui gli admin possono modificarle. Configura anche i limiti del silenzio notturno.
+    </li>
+    <li>
+      <strong>Admin</strong> — può modificare le soglie e le ore di silenzio entro i limiti
+      definiti dal superadmin. Accede alla pagina tramite "Soglie" nel menu laterale.
+    </li>
+  </ul>
+
+  <p class="section-label" style="margin-top:var(--space-lg);">Soglie immobilità</p>
+  <div class="table-row" style="margin-bottom:var(--space-sm);">
+    <span class="pill pill--warn" style="width:80px; flex-shrink:0; font-size:0.65rem;">🟠 Arancio</span>
+    <span style="font-size:0.82rem; color:var(--text); line-height:1.6;">
+      Alert di attenzione — il paziente è in posizione a rischio da troppo tempo.
+      Soglia di default: <?= defined('ALERT_ARANCIO_MIN') ? ALERT_ARANCIO_MIN : 20 ?> minuti.
+    </span>
+  </div>
+  <div class="table-row" style="margin-bottom:var(--space-sm);">
+    <span class="pill pill--red" style="width:80px; flex-shrink:0; font-size:0.65rem;">🔴 Rosso</span>
+    <span style="font-size:0.82rem; color:var(--text); line-height:1.6;">
+      Alert urgente — il paziente è in posizione a rischio da molto tempo. Intervento immediato.
+      Soglia di default: <?= defined('ALERT_ROSSO_MIN') ? ALERT_ROSSO_MIN : 30 ?> minuti.
+      La soglia rossa deve essere almeno 5 minuti maggiore della soglia arancio.
+    </span>
+  </div>
+
+  <p class="section-label" style="margin-top:var(--space-lg);">Silenzio notturno</p>
+  <p style="font-size:0.82rem; color:var(--text); line-height:1.7;">
+    Durante le ore notturne è normale che un paziente dorma supino a lungo — generare
+    alert ogni 20-30 minuti tutta la notte sarebbe inutile e stressante per il personale.
+    Il silenzio notturno sospende automaticamente gli alert di immobilità nelle ore configurate.
+  </p>
+  <p style="font-size:0.85rem; color:var(--muted); margin-top:var(--space-sm);">
+    💡 Gli alert SOS (pulsante di emergenza) e Batteria rimangono sempre attivi,
+    anche durante il silenzio notturno.
+  </p>
+</div>
+
+<!-- 6. Device -->
 <div class="card" id="device" style="margin-bottom:var(--space-xl);">
-  <p class="section-label">5. Device e sensori</p>
+  <p class="section-label">6. Device e sensori</p>
   <p style="font-size:0.85rem; color:var(--text); line-height:1.7;">
     Ogni sensore giroscopico viene registrato nel sistema con il suo indirizzo MAC.
     Una volta registrato, il sistema inizia automaticamente a ricevere e processare i dati.
@@ -152,9 +204,9 @@ include VIEW_PATH . 'layout/header.php';
   <?php endforeach; ?>
 </div>
 
-<!-- 6. Ubicazioni -->
+<!-- 7. Ubicazioni -->
 <div class="card" id="ubicazioni" style="margin-bottom:var(--space-xl);">
-  <p class="section-label">6. Ubicazioni</p>
+  <p class="section-label">7. Ubicazioni</p>
   <p style="font-size:0.85rem; color:var(--text); line-height:1.7;">
     Le ubicazioni definiscono la posizione fisica dei device all'interno della struttura.
     Sono organizzate su due livelli:
@@ -168,9 +220,9 @@ include VIEW_PATH . 'layout/header.php';
   </p>
 </div>
 
-<!-- 7. Utenti -->
+<!-- 8. Utenti -->
 <div class="card" id="utenti" style="margin-bottom:var(--space-xl);">
-  <p class="section-label">7. Gestione utenti</p>
+  <p class="section-label">8. Gestione utenti</p>
   <p style="font-size:0.85rem; color:var(--text); line-height:1.7;">
     Gli utenti vengono creati dall'admin o dal superadmin. Non è prevista registrazione pubblica.
   </p>
@@ -183,9 +235,9 @@ include VIEW_PATH . 'layout/header.php';
   </ul>
 </div>
 
-<!-- 8. Strutture -->
+<!-- 9. Strutture -->
 <div class="card" id="strutture" style="margin-bottom:var(--space-xl);">
-  <p class="section-label">8. Strutture</p>
+  <p class="section-label">9. Strutture</p>
   <p style="font-size:0.85rem; color:var(--text); line-height:1.7;">
     Ogni struttura RSA è un'entità indipendente con i propri device, utenti e ubicazioni.
     Un utente può essere associato a più strutture contemporaneamente.
@@ -196,9 +248,9 @@ include VIEW_PATH . 'layout/header.php';
   </p>
 </div>
 
-<!-- 9. Posizioni -->
+<!-- 10. Posizioni -->
 <div class="card" id="posizioni" style="margin-bottom:var(--space-xl);">
-  <p class="section-label">9. Posizioni rilevate</p>
+  <p class="section-label">10. Posizioni rilevate</p>
   <p style="font-size:0.85rem; color:var(--text); line-height:1.7; margin-bottom:var(--space-md);">
     Il sensore rileva continuamente l'orientamento del paziente e classifica la posizione
     in base ai dati dell'accelerometro.
@@ -225,9 +277,9 @@ include VIEW_PATH . 'layout/header.php';
   </p>
 </div>
 
-<!-- 10. Primo accesso -->
+<!-- 11. Primo accesso -->
 <div class="card" id="primo-accesso" style="margin-bottom:var(--space-xl);">
-  <p class="section-label">10. Primo accesso</p>
+  <p class="section-label">11. Primo accesso</p>
   <ol style="font-size:0.82rem; color:var(--text); line-height:1.9; padding-left:var(--space-lg);">
     <li>Accedi con le credenziali fornite dal tuo amministratore.</li>
     <li>Al primo accesso ti verrà chiesto di impostare una nuova password personale.</li>

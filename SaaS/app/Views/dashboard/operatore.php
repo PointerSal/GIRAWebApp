@@ -17,26 +17,31 @@
   <div class="table-stack">
     <?php foreach ($device_assegnati as $d): ?>
       <?php
-      $pill_class = 'pill--ok';
-      $pill_label = 'OK';
-      $offline = $d['ultimo_contatto'] === null || ($d['minuti_silenzio'] ?? 999) > 10;
+      $offline   = $d['ultimo_contatto'] === null || ($d['minuti_silenzio'] ?? 999) > 10;
+      $bed_color = 'var(--green)';
+      $bed_label = 'OK';
 
       if ($d['alert_tipo'] === 'PULSANTE') {
-        $pill_class = 'pill--red';
-        $pill_label = '🆘 SOS';
+        $bed_color = 'var(--red)';
+        $bed_label = '🆘 SOS';
       } elseif ($d['alert_tipo'] === 'ROSSO') {
-        $pill_class = 'pill--red';
-        $pill_label = 'Rosso';
+        $bed_color = 'var(--red)';
+        $bed_label = 'Rosso';
       } elseif ($d['alert_tipo'] === 'ARANCIO') {
-        $pill_class = 'pill--warn';
-        $pill_label = 'Arancio';
+        $bed_color = 'var(--amber)';
+        $bed_label = 'Arancio';
       } elseif ($offline) {
-        $pill_class = 'pill--muted';
-        $pill_label = 'Offline';
+        $bed_color = '#555';
+        $bed_label = 'Offline';
       }
       ?>
       <div class="table-row" data-device-id="<?= $d['id'] ?>" style="<?= $d['alert_tipo'] === 'PULSANTE' ? 'background:rgba(224,92,92,0.06);' : '' ?>">
-        <span class="pill <?= $pill_class ?> gira-stato-pill" style="width:72px; flex-shrink:0;"><?= $pill_label ?></span>
+        <span class="gira-stato-pill" style="width:56px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:2px;">
+          <?php $bed_size = 44; include VIEW_PATH . 'layout/_bed_icon.php'; ?>
+          <span style="font-size:0.58rem; color:<?= $bed_color ?>; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">
+            <?= $bed_label ?>
+          </span>
+        </span>
 
         <span class="table-row__label">
           <strong><?= htmlspecialchars($d['label'] ?? $d['mac']) ?></strong>
