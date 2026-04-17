@@ -494,6 +494,7 @@ function decode_gira_mfg(array $b): ?array
         'x'     => int16be($b[1], $b[2]),
         'y'     => int16be($b[3], $b[4]),
         'z'     => int16be($b[5], $b[6]),
+        'batteria' => ($b[8] >> 1) & 0x7F) * 100 / 127, // mappato 0-100%
         'stato' => $b[7],
     ];
 }
