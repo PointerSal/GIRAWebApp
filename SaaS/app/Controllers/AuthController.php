@@ -128,7 +128,14 @@ class AuthController
     public static function profilo(): void
     {
         Middleware::richiediLogin();
-        $utente   = Auth::utente();
+        $utente = Auth::utente();
+
+        // Carica nome ruolo
+        $db   = Database::getInstance();
+        $stmt = $db->prepare('SELECT nome FROM gir_ruolo WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => $utente['id_ruolo']]);
+        $utente['ruolo_nome'] = $stmt->fetchColumn() ?: '';
+
         $errore   = $_SESSION['errore']   ?? null;
         $successo = $_SESSION['successo'] ?? null;
         unset($_SESSION['errore'], $_SESSION['successo']);

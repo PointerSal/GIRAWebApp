@@ -403,6 +403,8 @@
       <?php include VIEW_PATH . 'layout/_nav.php'; ?>
     </nav>
     <div class="mob-drawer-footer">
+      <a href="javascript:void(0);" id="install-btn-mob" style="display:none;">📲 Installa app</a>
+      <a href="<?= APP_URL ?>/auth/profilo">⚙ Profilo</a>
       <a href="<?= APP_URL ?>/auth/logout">🚪 Esci</a>
     </div>
   </div>
@@ -519,6 +521,8 @@
           deferredPrompt = e;
           const s = document.getElementById('pwa-install-desk');
           if (s) s.style.display = 'block';
+          const m = document.getElementById('install-btn-mob');
+          if (m) m.style.display = 'block';
         });
         const handleInstall = async () => {
           if (!deferredPrompt) return;
@@ -529,9 +533,12 @@
           deferredPrompt = null;
           const s = document.getElementById('pwa-install-desk');
           if (s) s.style.display = 'none';
+          const m = document.getElementById('install-btn-mob');
+          if (m) m.style.display = 'none';
         };
         document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('install-btn-desk')?.addEventListener('click', handleInstall);
+          document.getElementById('install-btn-mob')?.addEventListener('click', handleInstall);
         });
         window.addEventListener('appinstalled', () => {
           deferredPrompt = null;
