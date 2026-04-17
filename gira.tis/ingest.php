@@ -315,7 +315,7 @@ function analizza_alert(
     PDO $db,
     int $idDevice,
     string $posizione,
-    int $batteria,
+    ?int $batteria,
     int $pulsante,
     int $sogliArancio,
     int $sogliaRosso,
