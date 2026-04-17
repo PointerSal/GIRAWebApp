@@ -38,11 +38,10 @@ class AlertController
                            a.aperto_alle ASC"
             );
             $alert = $stmt->fetchAll();
+
         } elseif (in_array($ruolo, [RUOLO_ADMIN, RUOLO_MEDICO])) {
             // Alert delle strutture accessibili
-            //$strutture_ids = Auth::strutture_accessibili();
-            $id_struttura  = Auth::struttura_attiva();
-            $strutture_ids = $id_struttura ? [$id_struttura] : Auth::strutture_accessibili();
+            $strutture_ids = Auth::strutture_accessibili();
             if (empty($strutture_ids)) {
                 $alert = [];
             } else {
@@ -66,9 +65,9 @@ class AlertController
                 $stmt->execute($strutture_ids);
                 $alert = $stmt->fetchAll();
             }
+
         } else {
             // Operatore — solo i device assegnati
-            $id_struttura = Auth::struttura_attiva();
             $stmt = $db->prepare(
                 "SELECT a.*, d.label, d.mac, d.id_struttura,
                         s.ragione_sociale AS struttura,
@@ -81,16 +80,11 @@ class AlertController
                    JOIN gir_utente_device ud ON ud.id_device = d.id AND ud.id_utente = :uid
               LEFT JOIN gir_ubicazione u  ON u.id = d.id_ubicazione
               LEFT JOIN gir_utenti ug     ON ug.id = a.id_utente_gestore
-                  WHERE a.chiuso_alle IS NULL AND (:id_struttura1 = 0 OR d.id_struttura = :id_struttura2)
+                  WHERE a.chiuso_alle IS NULL
                   ORDER BY FIELD(a.tipo,'PULSANTE','ROSSO','ARANCIO','BATTERIA','OFFLINE'),
                            a.aperto_alle ASC"
             );
-            //$stmt->execute([':uid' => $id_utente, ':id_struttura' => $id_struttura,]);
-            $stmt->execute([
-                ':uid'           => $id_utente,
-                ':id_struttura1' => $id_struttura,
-                ':id_struttura2' => $id_struttura,
-            ]);
+            $stmt->execute([':uid' => $id_utente]);
             $alert = $stmt->fetchAll();
         }
 
@@ -118,9 +112,7 @@ class AlertController
         $per_pagina       = 20;
         $offset           = ($pagina - 1) * $per_pagina;
 
-        //$strutture_ids = Auth::strutture_accessibili();
-        $id_struttura  = Auth::struttura_attiva();
-        $strutture_ids = $id_struttura ? [$id_struttura] : Auth::strutture_accessibili();
+        $strutture_ids = Auth::strutture_accessibili();
         if (empty($strutture_ids)) {
             $alert  = [];
             $totale = 0;
@@ -221,6 +213,7 @@ class AlertController
     // ----------------------------------------------------------
     //  GET /alert/chiudi/{id}
     //  Mostra form con nota opzionale
+    //  Non consentito per ROSSO e ARANCIO — chiusi solo da ingest
     // ----------------------------------------------------------
     public static function chiudi(?int $id): void
     {
@@ -228,6 +221,13 @@ class AlertController
 
         $alert = self::_trova($id);
         self::_verifica_accesso_alert($alert);
+
+        // ROSSO e ARANCIO si chiudono solo automaticamente
+        if (in_array($alert['tipo'], ['ROSSO', 'ARANCIO'])) {
+            $_SESSION['errore'] = 'Gli alert di immobilità si chiudono automaticamente quando il paziente cambia posizione.';
+            header('Location: ' . APP_URL . '/alert');
+            exit;
+        }
 
         $errore = $_SESSION['errore'] ?? null;
         unset($_SESSION['errore']);
@@ -250,6 +250,13 @@ class AlertController
         $note  = trim($_POST['note'] ?? '') ?: null;
         $alert = self::_trova($id);
         self::_verifica_accesso_alert($alert);
+
+        // ROSSO e ARANCIO si chiudono solo automaticamente
+        if (in_array($alert['tipo'], ['ROSSO', 'ARANCIO'])) {
+            $_SESSION['errore'] = 'Gli alert di immobilità si chiudono automaticamente quando il paziente cambia posizione.';
+            header('Location: ' . APP_URL . '/alert');
+            exit;
+        }
 
         Database::getInstance()->prepare(
             'UPDATE gir_alert

@@ -117,10 +117,12 @@ foreach ($data['devices'] as $dev) {
     $stato = (int)$g['stato'];
 
     // Decodifica byte stato
-    // bit 7-1: livello batteria (0-127 → mappato 0-100%)
     // bit 0:   pulsante (0/1)
-    $batteria = (int)round((($stato >> 1) & 0x7F) / 127 * 100);
     $pulsante = (int)($stato & 0x01);
+
+    $batteria = $g['batteria']; // null = N/A
+    //$batteria = (int)round((($stato >> 1) & 0x7F) / 127 * 100);
+
 
     // ── c. Scrivi dati grezzi (gir_raw) ─────────────────────
     // Serve per l'isteresi temporale — pulizia automatica in gestisci_posizione()
@@ -494,8 +496,8 @@ function decode_gira_mfg(array $b): ?array
         'x'     => int16be($b[1], $b[2]),
         'y'     => int16be($b[3], $b[4]),
         'z'     => int16be($b[5], $b[6]),
-        'batteria' => ($b[8] >> 1) & 0x7F) * 100 / 127, // mappato 0-100%
         'stato' => $b[7],
+        'batteria' => null, // TODO: non disponibile dal gateway HTTP — implementare quando il firmware supporterà Service Data
     ];
 }
 
