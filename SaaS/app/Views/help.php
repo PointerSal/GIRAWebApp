@@ -118,13 +118,33 @@ include VIEW_PATH . 'layout/header.php';
 
   <p class="section-label" style="margin-top:var(--space-xl);">Gestione alert</p>
   <ul style="font-size:0.82rem; color:var(--text); line-height:1.9; padding-left:var(--space-lg);">
-    <li><strong>Prendi in carico</strong> — segnala che stai gestendo l'alert. Il tuo nome appare sull'alert.</li>
-    <li><strong>Chiudi</strong> — chiude l'alert con nota opzionale (es. "Paziente riposizionato").</li>
+    <li><strong>Prendi in carico</strong> — segnala che stai gestendo l'alert. Il tuo nome appare sull'alert. Disponibile per tutti i tipi.</li>
+    <li><strong>Chiudi</strong> — chiude l'alert con nota opzionale (es. "Paziente riposizionato"). Disponibile solo per SOS, Batteria e Offline.</li>
     <li><strong>Storico</strong> — visualizza tutti gli alert chiusi con filtri per tipo e struttura.</li>
   </ul>
+
+  <p class="section-label" style="margin-top:var(--space-xl);">Chiusura alert per tipo</p>
+  <?php
+    $chiusura = [
+      ['🔴 Rosso',      'pill--red',  'Auto-chiusura', 'Automatica quando il paziente cambia posizione. Non può essere chiuso manualmente.'],
+      ['🟠 Arancio',    'pill--warn', 'Auto-chiusura', 'Automatica quando il paziente cambia posizione. Non può essere chiuso manualmente.'],
+      ['🆘 SOS',        'pill--red',  'Manuale',       'L\'operatore deve chiuderlo dopo aver raggiunto e assistito il paziente.'],
+      ['🔋 Batteria',   'pill--warn', 'Manuale',       'Chiudere dopo aver sostituito o ricaricato il sensore.'],
+      ['📡 Offline',    'pill--muted','Automatica',    'Si chiude automaticamente quando il sensore torna online. Può essere chiuso anche manualmente.'],
+    ];
+    foreach ($chiusura as [$nome, $pill, $modo, $desc]):
+  ?>
+  <div class="table-row" style="margin-bottom:var(--space-sm); align-items:flex-start;">
+    <span class="pill <?= $pill ?>" style="width:80px; flex-shrink:0; font-size:0.65rem;"><?= $nome ?></span>
+    <span style="font-size:0.72rem; color:var(--muted); width:90px; flex-shrink:0; padding-top:2px;"><?= $modo ?></span>
+    <span style="font-size:0.82rem; color:var(--text); line-height:1.6;"><?= $desc ?></span>
+  </div>
+  <?php endforeach; ?>
+
   <p style="font-size:0.85rem; color:var(--muted); margin-top:var(--space-md);">
-    💡 Gli alert di immobilità (Arancio/Rosso) si chiudono automaticamente quando il paziente
-    cambia posizione. Gli alert SOS e Batteria devono essere chiusi manualmente.
+    💡 La chiusura automatica degli alert Rosso e Arancio garantisce che l'alert rimanga
+    aperto finché il paziente non è stato effettivamente riposizionato — evitando che
+    venga chiuso per errore prima dell'intervento.
   </p>
   <p style="font-size:0.85rem; color:var(--muted); margin-top:var(--space-sm);">
     🌙 Durante le ore di silenzio notturno gli alert di immobilità non vengono generati.
