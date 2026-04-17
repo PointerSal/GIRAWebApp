@@ -264,6 +264,17 @@ header {
 .pill--red    { background: var(--alert-red-bg);   color: var(--alert-red-color); }
 .pill--muted  { background: rgba(90,122,110,0.12); color: var(--muted); }
 
+/* superadmin — rosso */
+.topbar-badge {
+  background: var(--red);
+  color: var(--bg);
+}
+
+/* admin — amber */
+.topbar-badge--admin {
+  background: var(--amber);
+  color: var(--bg);
+}
 
 /* ── SEZIONI ────────────────────────────────────────────────── */
 .section { padding: var(--space-2xl) 0; }

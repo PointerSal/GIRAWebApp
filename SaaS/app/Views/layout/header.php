@@ -7,6 +7,7 @@
   <title><?= htmlspecialchars($page_title ?? 'GIRA · Care Monitor') ?></title>
   <link rel="stylesheet" href="<?= APP_URL ?>/assets/css/gira.css" />
   <link rel="manifest" href="<?= APP_URL ?>/manifest.json" />
+  <link rel="icon" type="image/png" href="<?= APP_URL ?>/assets/img/gira_192x192.png" />
   <meta name="theme-color" content="#0b0f0e" />
   <script>
     if ('serviceWorker' in navigator) {
@@ -68,7 +69,8 @@
       font-size: 0.6rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      background: var(--green);
+      background: var(--red);
+      /* ← era var(--green) */
       color: var(--bg);
       padding: 2px 8px;
       border-radius: 2px;
@@ -83,6 +85,11 @@
     .topbar-badge--utente {
       background: var(--muted);
       color: var(--bg);
+    }
+
+    .topbar-badge--admin {
+      background: var(--amber);
+      color: #000 !important;
     }
 
     .topbar-user {
@@ -412,7 +419,7 @@
         ?>
           <span class="topbar-badge">Superadmin</span>
         <?php elseif ($ruolo === RUOLO_ADMIN): ?>
-          <span class="topbar-badge">Admin</span>
+          <span class="topbar-badge topbar-badge--admin">Admin</span>
         <?php elseif ($ruolo === RUOLO_MEDICO): ?>
           <span class="topbar-badge topbar-badge--medico">Medico</span>
         <?php elseif ($ruolo === RUOLO_UTENTE): ?>
