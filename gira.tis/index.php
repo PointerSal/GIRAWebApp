@@ -141,7 +141,7 @@ require_once BASE_PATH . 'app/Controllers/AlertController.php';
 require_once BASE_PATH . 'app/Controllers/ApiController.php';
 require_once BASE_PATH . 'app/Controllers/SoglieController.php';
 // require_once BASE_PATH . 'app/Controllers/IngestController.php';
-// require_once BASE_PATH . 'app/Controllers/PushController.php';
+require_once BASE_PATH . 'app/Controllers/PushController.php';
 require_once BASE_PATH . 'app/Controllers/ReportController.php';
 
 

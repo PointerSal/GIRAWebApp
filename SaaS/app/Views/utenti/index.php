@@ -98,8 +98,6 @@
           <?php endif; ?>
           <a href="<?= APP_URL ?>/utenti/modifica/<?= $u['id'] ?>"
             class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">MOD</a>
-          <a href="<?= APP_URL ?>/utenti/reset-pwd/<?= $u['id'] ?>"
-            class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">PSW</a>
         </div>
 
       </div>

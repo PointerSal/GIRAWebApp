@@ -542,16 +542,31 @@ class UtenteController
     {
         if (Auth::isSuperadmin()) return;
 
-        // Verifica che il target appartenga a una struttura dell'admin
+        // Admin non può mai toccare un superadmin
+        if ((int)$target['id_ruolo'] === RUOLO_SUPERADMIN) {
+            $_SESSION['errore'] = 'Non puoi gestire un superadmin.';
+            header('Location: ' . APP_URL . '/utenti');
+            exit;
+        }
+
+        // Admin non può toccare se stesso con privilegi elevati
+        // (può modificare il proprio profilo solo via /auth/profilo)
+        // Verifica che il target appartenga SOLO a strutture dell'admin
         $db   = Database::getInstance();
+
+        // Strutture del target
         $stmt = $db->prepare(
-            'SELECT 1 FROM gir_utente_struttura us1
-               JOIN gir_utente_struttura us2 ON us2.id_struttura = us1.id_struttura
-              WHERE us1.id_utente = :admin AND us2.id_utente = :target
-              LIMIT 1'
+            'SELECT id_struttura FROM gir_utente_struttura WHERE id_utente = :target'
         );
-        $stmt->execute([':admin' => Auth::id(), ':target' => $target['id']]);
-        if (!$stmt->fetch()) {
+        $stmt->execute([':target' => $target['id']]);
+        $strutture_target = array_column($stmt->fetchAll(), 'id_struttura');
+
+        // Strutture dell'admin
+        $strutture_admin = Auth::strutture_accessibili();
+
+        // Il target deve avere ALMENO una struttura in comune con l'admin
+        // E NON deve avere strutture fuori dal perimetro dell'admin
+        if (empty($strutture_target) || empty(array_intersect($strutture_target, $strutture_admin))) {
             $_SESSION['errore'] = 'Non puoi gestire utenti di un\'altra struttura.';
             header('Location: ' . APP_URL . '/utenti');
             exit;

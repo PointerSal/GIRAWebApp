@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../SaaS/gira/app/Config/config.php';
 require_once __DIR__ . '/../SaaS/gira/app/Core/Database.php';
+require_once __DIR__ . '/../SaaS/gira/vendor/autoload.php';
+require_once __DIR__ . '/../SaaS/gira/app/Core/NotificationService.php';
 
 // ── 1. API KEY ───────────────────────────────────────────────
 $headers = getallheaders();
@@ -400,6 +402,25 @@ function apri_alert_se_assente(PDO $db, int $idDevice, string $tipo, ?int $minut
         "INSERT INTO gir_alert (id_device, tipo, durata_minuti, aperto_alle)
          VALUES (:id, :tipo, :minuti, NOW())"
     )->execute([':id' => $idDevice, ':tipo' => $tipo, ':minuti' => $minuti]);
+
+    // Recupera label e ubicazione per la notifica
+    $info = $db->prepare(
+        "SELECT d.label, d.mac, u.area, u.subarea
+           FROM gir_device d
+      LEFT JOIN gir_ubicazione u ON u.id = d.id_ubicazione
+          WHERE d.id = :id LIMIT 1"
+    );
+    $info->execute([':id' => $idDevice]);
+    $info = $info->fetch();
+
+    NotificationService::invia(
+        $db,
+        $idDevice,
+        $tipo,
+        $info['label'] ?? $info['mac'] ?? null,
+        $info['area']    ?? null,
+        $info['subarea'] ?? null
+    );
 }
 
 /**
