@@ -289,7 +289,7 @@ class AlertController
             exit;
         }
         $stmt = Database::getInstance()->prepare(
-            'SELECT a.*, d.id_struttura
+            'SELECT a.*, d.id_struttura, d.mac, d.label
                FROM gir_alert a
                JOIN gir_device d ON d.id = a.id_device
               WHERE a.id = :id LIMIT 1'
