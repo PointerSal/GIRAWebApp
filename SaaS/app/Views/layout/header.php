@@ -79,7 +79,7 @@
 
     .topbar-badge--medico {
       background: var(--blue);
-      color: var(--bg);
+      color: #000 !important;
     }
 
     .topbar-badge--utente {

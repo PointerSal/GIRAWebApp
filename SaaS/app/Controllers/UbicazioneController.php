@@ -16,17 +16,18 @@ class UbicazioneController
 
         $id_struttura = (int)($_GET['id_struttura'] ?? 0);
 
-        // Se non specificata → mostra lista strutture per scegliere
+        // Se non specificata → usa struttura attiva in sessione
+        if (!$id_struttura) {
+            $id_struttura = (int)Auth::struttura_attiva();
+        }
+
+        // Se ancora non disponibile → fallback lista strutture (solo superadmin)
         if (!$id_struttura) {
             $strutture = self::_get_strutture_accessibili();
-
-            // Se ha una sola struttura → vai diretto
             if (count($strutture) === 1) {
                 header('Location: ' . APP_URL . '/ubicazioni?id_struttura=' . $strutture[0]['id']);
                 exit;
             }
-
-            // Più strutture → mostra selezione
             $page_title   = 'Ubicazioni — GIRA';
             $current_page = 'ubicazioni';
             include VIEW_PATH . 'layout/header.php';

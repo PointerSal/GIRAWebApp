@@ -92,14 +92,14 @@
         <div class="flex-center gap-sm">
           <?php if ((int)$u['id_ruolo'] !== RUOLO_SUPERADMIN): ?>
             <a href="<?= APP_URL ?>/utenti/device-assegnati/<?= $u['id'] ?>"
-              class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px; color:var(--green); border-color:var(--green);">Device</a>
+              class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px; color:var(--green); border-color:var(--green);">DEV</a>
           <?php else: ?>
             <span style="display:inline-block; width:52px;"></span><!-- placeholder allineamento -->
           <?php endif; ?>
           <a href="<?= APP_URL ?>/utenti/modifica/<?= $u['id'] ?>"
-            class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">Modifica</a>
+            class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">MOD</a>
           <a href="<?= APP_URL ?>/utenti/reset-pwd/<?= $u['id'] ?>"
-            class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">Password</a>
+            class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">PSW</a>
         </div>
 
       </div>

@@ -142,7 +142,7 @@ require_once BASE_PATH . 'app/Controllers/ApiController.php';
 require_once BASE_PATH . 'app/Controllers/SoglieController.php';
 // require_once BASE_PATH . 'app/Controllers/IngestController.php';
 // require_once BASE_PATH . 'app/Controllers/PushController.php';
-// require_once BASE_PATH . 'app/Controllers/ReportController.php';  quando decommenti qua, decommenta anche righe 283 - 286
+require_once BASE_PATH . 'app/Controllers/ReportController.php';
 
 
 // ============================================================
@@ -300,10 +300,9 @@ $routes = [
     // ----------------------------------------------------------
     // REPORT (admin + superadmin)
     // ----------------------------------------------------------
-    /*     'report' => [
-        'index'   => fn() => ReportController::index(),
-        'esporta' => fn() => ReportController::esporta(),
-    ], */
+    'report' => [
+        'index' => fn() => ReportController::index(),
+    ],
 
     'api' => [
         'alert-attivi' => fn() => ApiController::alertAttivi(),

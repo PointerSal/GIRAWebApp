@@ -94,10 +94,12 @@ asort($strutture_uniche);
         <?php endif; ?>
 
         <div class="flex-center gap-sm">
-          <a href="<?= APP_URL ?>/device/show/<?= $d['id'] ?>"
-            class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">Dettaglio</a>
-          <a href="<?= APP_URL ?>/device/modifica/<?= $d['id'] ?>"
-            class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">Modifica</a>
+          <a href="<?= APP_URL ?>/device/show/<?= $d['id'] ?>" class="btn btn--outline btn--icon" title="Dettaglio">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </a>
         </div>
 
       </div>

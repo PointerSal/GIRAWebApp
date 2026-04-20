@@ -12,8 +12,6 @@
   <div class="flex-center gap-sm">
     <?php if (Auth::isSuperadmin()): ?>
       <a href="<?= APP_URL ?>/strutture/show/<?= $struttura['id'] ?>" class="btn btn--outline">← Struttura</a>
-    <?php else: ?>
-      <a href="<?= APP_URL ?>/ubicazioni" class="btn btn--outline">← Strutture</a>
     <?php endif; ?>
     <a href="<?= APP_URL ?>/ubicazioni/crea?id_struttura=<?= $id_struttura ?>"
       class="btn btn--primary">+ Nuova ubicazione</a>

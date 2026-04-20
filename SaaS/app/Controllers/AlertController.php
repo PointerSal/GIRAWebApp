@@ -38,10 +38,10 @@ class AlertController
                            a.aperto_alle ASC"
             );
             $alert = $stmt->fetchAll();
-
         } elseif (in_array($ruolo, [RUOLO_ADMIN, RUOLO_MEDICO])) {
             // Alert delle strutture accessibili
-            $strutture_ids = Auth::strutture_accessibili();
+            $id_attiva = Auth::struttura_attiva();
+            $strutture_ids = $id_attiva ? [$id_attiva] : Auth::strutture_accessibili();
             if (empty($strutture_ids)) {
                 $alert = [];
             } else {
@@ -65,7 +65,6 @@ class AlertController
                 $stmt->execute($strutture_ids);
                 $alert = $stmt->fetchAll();
             }
-
         } else {
             // Operatore — solo i device assegnati
             $stmt = $db->prepare(
@@ -112,7 +111,8 @@ class AlertController
         $per_pagina       = 20;
         $offset           = ($pagina - 1) * $per_pagina;
 
-        $strutture_ids = Auth::strutture_accessibili();
+        $id_attiva = Auth::struttura_attiva();
+        $strutture_ids = $id_attiva ? [$id_attiva] : Auth::strutture_accessibili();
         if (empty($strutture_ids)) {
             $alert  = [];
             $totale = 0;

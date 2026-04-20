@@ -40,7 +40,7 @@
 <div class="card">
   <div class="flex-between mb-md">
     <p class="section-label" style="margin:0;">Stato device</p>
-    <a href="<?= APP_URL ?>/device/crea" class="btn btn--primary" style="font-size:0.7rem; padding:6px 14px;">+ Device</a>
+    <a href="<?= APP_URL ?>/device" class="btn btn--outline" style="font-size:0.7rem; padding:6px 14px;">Device →</a>
   </div>
   <div class="table-stack">
     <?php if (empty($device_stato)): ?>
