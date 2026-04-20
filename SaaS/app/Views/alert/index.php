@@ -114,26 +114,28 @@ foreach ($alert as $a) {
 
         <!-- Azioni -->
         <div class="flex-center gap-sm">
-          <?php if (!$a['gestito']): ?>
-            <a href="<?= APP_URL ?>/alert/prendi-in-carico/<?= $a['id'] ?>"
-              class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px; color:var(--amber); border-color:var(--amber);">
-              Prendi in carico
-            </a>
-          <?php endif; ?>
-          <?php if (!in_array($a['tipo'], ['ROSSO', 'ARANCIO'])): ?>
-            <a href="<?= APP_URL ?>/alert/chiudi/<?= $a['id'] ?>"
+          <?php if (!Auth::isMedico()): ?>
+            <?php if (!$a['gestito']): ?>
+              <a href="<?= APP_URL ?>/alert/prendi-in-carico/<?= $a['id'] ?>"
+                class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px; color:var(--amber); border-color:var(--amber);">
+                Prendi in carico
+              </a>
+            <?php endif; ?>
+            <?php if (!in_array($a['tipo'], ['ROSSO', 'ARANCIO'])): ?>
+              <a href="<?= APP_URL ?>/alert/chiudi/<?= $a['id'] ?>"
+                class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">
+                Chiudi
+              </a>
+            <?php else: ?>
+              <span style="font-size:0.68rem; color:var(--muted); padding:3px 10px;">
+                Auto-chiusura
+              </span>
+            <?php endif; ?>
+            <a href="<?= APP_URL ?>/device/show/<?= $a['id_device'] ?>"
               class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">
-              Chiudi
+              Device →
             </a>
-          <?php else: ?>
-            <span style="font-size:0.68rem; color:var(--muted); padding:3px 10px;">
-              Auto-chiusura
-            </span>
           <?php endif; ?>
-          <a href="<?= APP_URL ?>/device/show/<?= $a['id_device'] ?>"
-            class="btn btn--outline" style="font-size:0.68rem; padding:3px 10px;">
-            Device →
-          </a>
         </div>
 
       </div>

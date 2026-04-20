@@ -434,12 +434,12 @@ class UtenteController
         $target = self::_trova($id);
         self::_verifica_accesso($target);
 
-        // Solo per operatori
-        // if ((int)$target['id_ruolo'] !== RUOLO_UTENTE) {
-        //     $_SESSION['errore'] = 'L\'assegnazione device è disponibile solo per gli operatori.';
-        //     header('Location: ' . APP_URL . '/utenti');
-        //     exit;
-        // }
+        // Non disponibile per medici
+        if ((int)$target['id_ruolo'] === RUOLO_MEDICO) {
+            $_SESSION['errore'] = 'I medici non hanno assegnazione device individuale.';
+            header('Location: ' . APP_URL . '/utenti');
+            exit;
+        }
 
         $db = Database::getInstance();
 
@@ -457,7 +457,7 @@ class UtenteController
                    JOIN gir_struttura s     ON s.id = d.id_struttura
               LEFT JOIN gir_ubicazione u    ON u.id = d.id_ubicazione
                   WHERE d.id_struttura IN ($ph) AND d.attivo = 1
-                  ORDER BY s.ragione_sociale, d.label"
+                  ORDER BY s.ragione_sociale, u.area, u.subarea, d.label"
             );
             $stmt->execute($ids_strutture);
             $device_disponibili = $stmt->fetchAll();
@@ -485,8 +485,14 @@ class UtenteController
     {
         Middleware::richiediAdmin();
 
-        $id = (int)($_POST['id'] ?? 0);
-        self::_trova($id);
+        $id     = (int)($_POST['id'] ?? 0);
+        $target = self::_trova($id);
+
+        if ((int)$target['id_ruolo'] === RUOLO_MEDICO) {
+            $_SESSION['errore'] = 'I medici non hanno assegnazione device individuale.';
+            header('Location: ' . APP_URL . '/utenti');
+            exit;
+        }
 
         $db          = Database::getInstance();
         $device_ids  = array_map('intval', $_POST['device_ids'] ?? []);

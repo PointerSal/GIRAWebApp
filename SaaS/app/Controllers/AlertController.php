@@ -192,7 +192,7 @@ class AlertController
     // ----------------------------------------------------------
     public static function prendiInCarico(?int $id): void
     {
-        Middleware::richiediLogin();
+        Middleware::richiediNonMedico();
 
         $alert = self::_trova($id);
         self::_verifica_accesso_alert($alert);
@@ -217,7 +217,7 @@ class AlertController
     // ----------------------------------------------------------
     public static function chiudi(?int $id): void
     {
-        Middleware::richiediLogin();
+        Middleware::richiediNonMedico();
 
         $alert = self::_trova($id);
         self::_verifica_accesso_alert($alert);
@@ -244,7 +244,7 @@ class AlertController
     // ----------------------------------------------------------
     public static function chiudiPost(): void
     {
-        Middleware::richiediLogin();
+        Middleware::richiediNonMedico();
 
         $id    = (int)($_POST['id'] ?? 0);
         $note  = trim($_POST['note'] ?? '') ?: null;

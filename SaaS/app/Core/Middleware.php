@@ -108,4 +108,14 @@ class Middleware
             exit;
         }
     }
+
+    public static function richiediNonMedico(): void
+    {
+        self::richiediLogin();
+        if (Auth::ruolo() === RUOLO_MEDICO) {
+            $_SESSION['errore'] = 'Operazione non consentita per il ruolo medico.';
+            header('Location: ' . APP_URL . '/alert');
+            exit;
+        }
+    }
 }
