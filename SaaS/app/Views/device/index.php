@@ -73,6 +73,16 @@ asort($strutture_uniche);
           <?= $d['area'] ? htmlspecialchars($d['area'] . ($d['subarea'] ? ' · ' . $d['subarea'] : '')) : '<span style="color:var(--muted);">—</span>' ?>
         </span>
 
+        <?php if ((int)$d['tot_utenti_assegnati'] === 0 && $d['attivo']): ?>
+          <span class="table-row__meta" style="color:var(--amber); font-size:0.72rem;" title="Nessun operatore assegnato">
+            ⚠ Non assegnato
+          </span>
+        <?php else: ?>
+          <span class="table-row__meta" style="color:var(--muted); font-size:0.72rem;">
+            👤 <?= $d['tot_utenti_assegnati'] ?>
+          </span>
+        <?php endif; ?>
+
         <span class="table-row__meta" style="min-width:80px;">
           <?php if (!$d['attivo']): ?>
             <span style="color:var(--muted);">Disattivato</span>

@@ -98,6 +98,34 @@ $offline = isset($stato) && $stato
 
 </div>
 
+<!-- Utenti assegnati -->
+<div class="card" style="margin-bottom:var(--space-xl);">
+  <p class="section-label" style="margin:0 0 var(--space-md);">Operatori assegnati</p>
+  <div class="table-stack">
+    <?php if (empty($utenti_assegnati)): ?>
+      <div class="table-row">
+        <span style="color:var(--amber); font-size:0.82rem;">⚠ Nessun operatore assegnato a questo dispositivo.</span>
+      </div>
+    <?php else: ?>
+      <?php foreach ($utenti_assegnati as $u): ?>
+        <div class="table-row">
+          <span class="table-row__label">
+            <strong><?= htmlspecialchars($u['nome'] . ' ' . $u['cognome']) ?></strong>
+            <span class="pill pill--muted" style="font-size:0.6rem; padding:2px 7px; margin-left:6px;">
+              <?= htmlspecialchars($u['ruolo_nome']) ?>
+            </span>
+          </span>
+          <a href="<?= APP_URL ?>/device/rimuovi-utente/<?= $device['id'] ?>?uid=<?= $u['id'] ?>"
+            class="btn btn--danger" style="font-size:0.68rem; padding:3px 10px; margin-left:auto;"
+            onclick="return confirm('Rimuovere <?= htmlspecialchars($u['nome'] . ' ' . $u['cognome']) ?> da questo dispositivo?')">
+            Rimuovi
+          </a>
+        </div>
+      <?php endforeach; ?>
+    <?php endif; ?>
+  </div>
+</div>
+
 <!-- Alert aperti -->
 <?php if (!empty($alert)): ?>
   <div class="card" style="margin-bottom:var(--space-xl);">

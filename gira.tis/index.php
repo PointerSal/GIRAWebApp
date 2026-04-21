@@ -258,6 +258,7 @@ $routes = [
         'assegna'      => fn() => DeviceController::assegna($id),
         'assegna-post' => fn() => DeviceController::assegnaPost(),
         'ubicazioni-json' => fn() => DeviceController::ubicazioniJson(),
+        'rimuovi-utente' => fn() => DeviceController::rimuoviUtente($id),
     ],
 
     // ----------------------------------------------------------

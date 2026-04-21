@@ -31,12 +31,17 @@ class DeviceController
                         u.area, u.subarea,
                         ds.posizione, ds.stato_batt, ds.stato_segnale,
                         ds.ultimo_contatto,
-                        TIMESTAMPDIFF(MINUTE, ds.ultimo_contatto, NOW()) AS minuti_silenzio
+                        TIMESTAMPDIFF(MINUTE, ds.ultimo_contatto, NOW()) AS minuti_silenzio,
+                        COUNT(ud.id_utente) AS tot_utenti_assegnati
                    FROM gir_device d
                    JOIN gir_struttura s      ON s.id = d.id_struttura
               LEFT JOIN gir_ubicazione u     ON u.id = d.id_ubicazione
               LEFT JOIN gir_device_stato ds  ON ds.id_device = d.id
+              LEFT JOIN gir_utente_device ud ON ud.id_device = d.id
                   WHERE d.id_struttura IN ($placeholders)
+                  GROUP BY d.id, s.ragione_sociale, u.area, u.subarea,
+                           ds.posizione, ds.stato_batt, ds.stato_segnale,
+                           ds.ultimo_contatto
                   ORDER BY s.ragione_sociale, d.label, d.mac"
             );
             $stmt->execute($strutture_ids);
@@ -87,6 +92,21 @@ class DeviceController
         );
         $alert->execute([':id' => $id]);
         $alert = $alert->fetchAll();
+
+        // Utenti assegnati al device
+        $utenti_assegnati = $db->prepare(
+            "SELECT u.id, u.nome, u.cognome, r.nome AS ruolo_nome
+               FROM gir_utenti u
+               JOIN gir_utente_device ud ON ud.id_utente = u.id
+               JOIN gir_ruolo r ON r.id = u.id_ruolo
+              WHERE ud.id_device = :id
+              ORDER BY u.cognome, u.nome"
+        );
+        $utenti_assegnati->execute([':id' => $id]);
+        $utenti_assegnati = $utenti_assegnati->fetchAll();
+
+        // Ubicazione corrente
+        $ubicazione = null;
 
         // Ubicazione corrente
         $ubicazione = null;
@@ -342,6 +362,30 @@ class DeviceController
             'mac'           => $mac,
             'label'         => $label,
         ];
+    }
+
+    // ----------------------------------------------------------
+    //  GET /device/rimuovi-utente/{id_device}?uid={id_utente}
+    // ----------------------------------------------------------
+    public static function rimuoviUtente(?int $id): void
+    {
+        Middleware::richiediAdmin();
+        $device = self::_trova($id);
+        Middleware::richiediAccessoStruttura((int)$device['id_struttura']);
+
+        $id_utente = (int)($_GET['uid'] ?? 0);
+        if (!$id_utente) {
+            header('Location: ' . APP_URL . '/device/show/' . $id);
+            exit;
+        }
+
+        Database::getInstance()->prepare(
+            'DELETE FROM gir_utente_device WHERE id_device = :did AND id_utente = :uid'
+        )->execute([':did' => $id, ':uid' => $id_utente]);
+
+        $_SESSION['successo'] = 'Operatore rimosso.';
+        header('Location: ' . APP_URL . '/device/show/' . $id);
+        exit;
     }
 
     public static function ubicazioniJson(): void
