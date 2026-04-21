@@ -164,7 +164,7 @@ function fmt_min(int $min): string
       <?php if (count($strutture) > 1): ?>
         <span style="flex:1.5; min-width:120px;">Struttura</span>
       <?php endif; ?>
-      <span style="flex:1; min-width:80px;">Ubicazione</span>
+      <span style="flex:1; min-width:80px;">Reparto</span>
       <?php if (in_array('ROSSO', $filtro_tipi)): ?>
         <span style="flex:0.8; min-width:60px; text-align:center; color:var(--red);">Rossi</span>
         <span style="flex:0.8; min-width:70px; text-align:center; color:var(--red);">Tempo rosso</span>
@@ -200,7 +200,7 @@ function fmt_min(int $min): string
           </span>
         <?php endif; ?>
 
-        <!-- Ubicazione -->
+        <!-- Reparto -->
         <span class="table-row__meta" style="flex:1; min-width:80px; font-size:0.72rem;">
           <?= $r['area'] ? htmlspecialchars($r['area'] . ($r['subarea'] ? ' · ' . $r['subarea'] : '')) : '<span style="color:var(--muted);">—</span>' ?>
         </span>

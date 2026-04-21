@@ -10,6 +10,7 @@
 //  */5 * * * * /usr/local/bin/php /home/klmkejnd/tis.gira/cron/device_silenzio.php >> /home/klmkejnd/tis.gira/cron/cron_log.txt 2>&1
 // ============================================================
 
+
 // Evita esecuzioni sovrapposte
 $lock = sys_get_temp_dir() . '/gira_device_silenzio.lock';
 if (file_exists($lock)) exit;
@@ -17,6 +18,8 @@ file_put_contents($lock, '1');
 
 require_once __DIR__ . '/../../SaaS/gira/app/Config/config.php';
 require_once __DIR__ . '/../../SaaS/gira/app/Core/Database.php';
+require_once __DIR__ . '/../../SaaS/gira/vendor/autoload.php';
+require_once __DIR__ . '/../../SaaS/gira/app/Core/NotificationService.php';
 
 try {
     $db = Database::getInstance();
@@ -45,6 +48,25 @@ try {
             "INSERT INTO gir_alert (id_device, tipo, aperto_alle)
              VALUES (:id, 'OFFLINE', NOW())"
         )->execute([':id' => $d['id']]);
+
+        // Recupera label e ubicazione per la notifica push
+        $info = $db->prepare(
+            "SELECT d.label, d.mac, u.area, u.subarea
+               FROM gir_device d
+          LEFT JOIN gir_ubicazione u ON u.id = d.id_ubicazione
+              WHERE d.id = :id LIMIT 1"
+        );
+        $info->execute([':id' => $d['id']]);
+        $info = $info->fetch();
+
+        NotificationService::invia(
+            $db,
+            (int)$d['id'],
+            'OFFLINE',
+            $info['label'] ?? $info['mac'] ?? null,
+            $info['area']    ?? null,
+            $info['subarea'] ?? null
+        );
 
         echo date('Y-m-d H:i:s') . " — Alert OFFLINE aperto per device {$d['id']} "
             . "(silenzioso da {$d['minuti_silenzio']} min)\n";

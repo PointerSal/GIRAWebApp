@@ -14,7 +14,7 @@ $d    = $form_data;
     </div>
   </div>
   <a href="<?= APP_URL ?>/device<?= $edit ? '/show/' . $device['id'] : '' ?>"
-     class="btn btn--outline">← Annulla</a>
+    class="btn btn--outline">← Annulla</a>
 </div>
 
 <?php if (!empty($errore)): ?>
@@ -25,26 +25,26 @@ $d    = $form_data;
   <form action="<?= APP_URL ?>/device/<?= $edit ? 'modifica-post' : 'crea-post' ?>" method="POST">
 
     <?php if ($edit): ?>
-      <input type="hidden" name="id" value="<?= $device['id'] ?>"/>
+      <input type="hidden" name="id" value="<?= $device['id'] ?>" />
     <?php endif; ?>
 
     <!-- Struttura -->
     <div class="form-group">
       <label for="id_struttura">Struttura RSA *</label>
       <?php if ($edit): ?>
-        <input type="hidden" name="id_struttura" value="<?= $device['id_struttura'] ?>"/>
+        <input type="hidden" name="id_struttura" value="<?= $device['id_struttura'] ?>" />
         <?php
-          // Trova nome struttura
-          $stmt = Database::getInstance()->prepare('SELECT ragione_sociale FROM gir_struttura WHERE id = :id LIMIT 1');
-          $stmt->execute([':id' => $device['id_struttura']]);
-          $nome_struttura = $stmt->fetchColumn();
+        // Trova nome struttura
+        $stmt = Database::getInstance()->prepare('SELECT ragione_sociale FROM gir_struttura WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => $device['id_struttura']]);
+        $nome_struttura = $stmt->fetchColumn();
         ?>
         <input type="text" value="<?= htmlspecialchars($nome_struttura) ?>"
-               readonly style="opacity:0.6;"/>
+          readonly style="opacity:0.6;" />
         <span style="font-size:0.7rem; color:var(--muted);">La struttura non può essere modificata.</span>
       <?php else: ?>
         <select id="id_struttura" name="id_struttura" required
-                onchange="aggiornaUbicazioni(this.value)">
+          onchange="aggiornaUbicazioni(this.value)">
           <option value="">— Seleziona struttura —</option>
           <?php foreach ($strutture as $s): ?>
             <option value="<?= $s['id'] ?>"
@@ -61,15 +61,15 @@ $d    = $form_data;
       <label for="mac">MAC address *</label>
       <?php if ($edit): ?>
         <input type="text" value="<?= htmlspecialchars($device['mac']) ?>"
-               readonly style="opacity:0.6; font-family:var(--font-mono);"/>
+          readonly style="opacity:0.6; font-family:var(--font-mono);" />
         <span style="font-size:0.7rem; color:var(--muted);">Il MAC non può essere modificato.</span>
       <?php else: ?>
         <input type="text" id="mac" name="mac"
-               value="<?= htmlspecialchars($d['mac'] ?? '') ?>"
-               placeholder="D1A3CD5B58CE"
-               maxlength="17"
-               style="font-family:var(--font-mono);"
-               required/>
+          value="<?= htmlspecialchars($d['mac'] ?? '') ?>"
+          placeholder="D1A3CD5B58CE"
+          maxlength="17"
+          style="font-family:var(--font-mono);"
+          required />
         <span style="font-size:0.7rem; color:var(--muted);">
           12 caratteri hex, con o senza separatori (es: D1A3CD5B58CE o D1:A3:CD:5B:58:CE)
         </span>
@@ -80,16 +80,16 @@ $d    = $form_data;
     <div class="form-group">
       <label for="label">Etichetta / Nome paziente</label>
       <input type="text" id="label" name="label"
-             value="<?= htmlspecialchars($d['label'] ?? '') ?>"
-             placeholder="Es: Sig. Rossi — Stanza 3"/>
+        value="<?= htmlspecialchars($d['label'] ?? '') ?>"
+        placeholder="Es: Sig. Rossi — Stanza 3" />
       <span style="font-size:0.7rem; color:var(--muted);">
         Nome leggibile che apparirà nella dashboard
       </span>
     </div>
 
-    <!-- Ubicazione -->
+    <!-- Reparto -->
     <div class="form-group">
-      <label for="id_ubicazione">Ubicazione</label>
+      <label for="id_ubicazione">Reparto</label>
       <select id="id_ubicazione" name="id_ubicazione">
         <option value="">— Non assegnata —</option>
         <?php foreach ($ubicazioni as $u): ?>
@@ -102,15 +102,15 @@ $d    = $form_data;
     </div>
 
     <?php if ($edit): ?>
-    <!-- Stato attivo -->
-    <div class="form-group">
-      <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-        <input type="checkbox" name="attivo" value="1"
-               <?= $device['attivo'] ? 'checked' : '' ?>
-               style="width:16px; height:16px;"/>
-        Device attivo
-      </label>
-    </div>
+      <!-- Stato attivo -->
+      <div class="form-group">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+          <input type="checkbox" name="attivo" value="1"
+            <?= $device['attivo'] ? 'checked' : '' ?>
+            style="width:16px; height:16px;" />
+          Device attivo
+        </label>
+      </div>
     <?php endif; ?>
 
     <div class="flex-center gap-md mt-xl">
@@ -118,36 +118,36 @@ $d    = $form_data;
         <?= $edit ? 'Salva modifiche' : 'Registra device' ?>
       </button>
       <a href="<?= APP_URL ?>/device<?= $edit ? '/show/' . $device['id'] : '' ?>"
-         class="btn btn--outline">Annulla</a>
+        class="btn btn--outline">Annulla</a>
     </div>
 
   </form>
 </div>
 
 <?php if (!$edit): ?>
-<script>
-// Aggiorna dinamicamente le ubicazioni quando cambia la struttura
-function aggiornaUbicazioni(idStruttura) {
-  const sel = document.getElementById('id_ubicazione');
-  sel.innerHTML = '<option value="">— Caricamento... —</option>';
+  <script>
+    // Aggiorna dinamicamente le ubicazioni quando cambia la struttura
+    function aggiornaUbicazioni(idStruttura) {
+      const sel = document.getElementById('id_ubicazione');
+      sel.innerHTML = '<option value="">— Caricamento... —</option>';
 
-  if (!idStruttura) {
-    sel.innerHTML = '<option value="">— Non assegnata —</option>';
-    return;
-  }
+      if (!idStruttura) {
+        sel.innerHTML = '<option value="">— Non assegnata —</option>';
+        return;
+      }
 
-  fetch('<?= APP_URL ?>/device/ubicazioni-json?id_struttura=' + idStruttura)
-    .then(r => r.json())
-    .then(data => {
-      sel.innerHTML = '<option value="">— Non assegnata —</option>';
-      data.forEach(u => {
-        const label = u.area + (u.subarea ? ' · ' + u.subarea : '');
-        sel.innerHTML += `<option value="${u.id}">${label}</option>`;
-      });
-    })
-    .catch(() => {
-      sel.innerHTML = '<option value="">— Non assegnata —</option>';
-    });
-}
-</script>
+      fetch('<?= APP_URL ?>/device/ubicazioni-json?id_struttura=' + idStruttura)
+        .then(r => r.json())
+        .then(data => {
+          sel.innerHTML = '<option value="">— Non assegnata —</option>';
+          data.forEach(u => {
+            const label = u.area + (u.subarea ? ' · ' + u.subarea : '');
+            sel.innerHTML += `<option value="${u.id}">${label}</option>`;
+          });
+        })
+        .catch(() => {
+          sel.innerHTML = '<option value="">— Non assegnata —</option>';
+        });
+    }
+  </script>
 <?php endif; ?>

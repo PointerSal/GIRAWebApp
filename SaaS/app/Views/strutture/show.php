@@ -84,7 +84,7 @@
   </div>
   <?php if (empty($ubicazioni)): ?>
     <div class="table-row">
-      <span class="table-row__label text-muted">Nessuna ubicazione definita.</span>
+      <span class="table-row__label text-muted">Nessun reparto definito.</span>
     </div>
   <?php else: ?>
     <div class="table-stack">

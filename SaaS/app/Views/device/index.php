@@ -22,7 +22,7 @@ asort($strutture_uniche);
     <h1>Dispositivi</h1>
     <div class="page-header-sub"><?= count($device_filtrati) ?> sensori<?= $filtro_struttura ? ' · ' . htmlspecialchars($strutture_uniche[$filtro_struttura] ?? '') : '' ?></div>
   </div>
-  <a href="<?= APP_URL ?>/device/crea<?= $filtro_struttura ? '?id_struttura=' . $filtro_struttura : '' ?>" class="btn btn--primary">+ Nuovo device</a>
+  <a href="<?= APP_URL ?>/device/crea<?= $filtro_struttura ? '?id_struttura=' . $filtro_struttura : '' ?>" class="btn btn--primary">+ Nuovo dispositivo</a>
 </div>
 
 <!-- Filtro struttura -->

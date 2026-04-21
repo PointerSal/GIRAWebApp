@@ -228,7 +228,7 @@ include VIEW_PATH . 'layout/header.php';
 <div class="card" id="ubicazioni" style="margin-bottom:var(--space-xl);">
   <p class="section-label">7. Reparti</p>
   <p style="font-size:0.85rem; color:var(--text); line-height:1.7;">
-    Le ubicazioni definiscono la posizione fisica dei device all'interno della struttura.
+    I reparti definiscono la posizione fisica dei dispositivi all'interno della struttura.
     Sono organizzate su due livelli:
   </p>
   <ul style="font-size:0.82rem; color:var(--text); line-height:1.9; margin-top:var(--space-sm); padding-left:var(--space-lg);">
@@ -236,7 +236,7 @@ include VIEW_PATH . 'layout/header.php';
     <li><strong>Subarea</strong> — es. "Stanza 1", "Letto A", "Camera 12"</li>
   </ul>
   <p style="font-size:0.85rem; color:var(--muted); margin-top:var(--space-md);">
-    💡 Un'ubicazione non può essere eliminata se ha device attivi assegnati.
+    💡 Un reparto non può essere eliminata se ha device attivi assegnati.
   </p>
 </div>
 

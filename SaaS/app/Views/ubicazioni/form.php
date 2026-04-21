@@ -8,11 +8,11 @@ $d    = $form_data;
 
 <div class="page-header">
   <div>
-    <h1><?= $edit ? 'Modifica ubicazione' : 'Nuova ubicazione' ?></h1>
+    <h1><?= $edit ? 'Modifica reparto' : 'Nuovo reparto' ?></h1>
     <div class="page-header-sub"><?= htmlspecialchars($struttura['ragione_sociale']) ?></div>
   </div>
   <a href="<?= APP_URL ?>/ubicazioni?id_struttura=<?= $id_struttura ?>"
-     class="btn btn--outline">← Annulla</a>
+    class="btn btn--outline">← Annulla</a>
 </div>
 
 <?php if (!empty($errore)): ?>
@@ -22,17 +22,17 @@ $d    = $form_data;
 <div class="card" style="max-width:500px;">
   <form action="<?= APP_URL ?>/ubicazioni/<?= $edit ? 'modifica-post' : 'crea-post' ?>" method="POST">
 
-    <input type="hidden" name="id_struttura" value="<?= $id_struttura ?>"/>
+    <input type="hidden" name="id_struttura" value="<?= $id_struttura ?>" />
     <?php if ($edit): ?>
-      <input type="hidden" name="id" value="<?= $ubicazione['id'] ?>"/>
+      <input type="hidden" name="id" value="<?= $ubicazione['id'] ?>" />
     <?php endif; ?>
 
     <div class="form-group">
       <label for="area">Area *</label>
       <input type="text" id="area" name="area"
-             value="<?= htmlspecialchars($d['area'] ?? '') ?>"
-             placeholder="Es: Piano 1, Reparto Nord, Ala Est"
-             required autofocus/>
+        value="<?= htmlspecialchars($d['area'] ?? '') ?>"
+        placeholder="Es: Piano 1, Reparto Nord, Ala Est"
+        required autofocus />
       <span style="font-size:0.7rem; color:var(--muted);">
         Raggruppamento principale — es. piano o reparto
       </span>
@@ -41,8 +41,8 @@ $d    = $form_data;
     <div class="form-group">
       <label for="subarea">Subarea</label>
       <input type="text" id="subarea" name="subarea"
-             value="<?= htmlspecialchars($d['subarea'] ?? '') ?>"
-             placeholder="Es: Stanza 8, Letto A"/>
+        value="<?= htmlspecialchars($d['subarea'] ?? '') ?>"
+        placeholder="Es: Stanza 8, Letto A" />
       <span style="font-size:0.7rem; color:var(--muted);">
         Dettaglio opzionale — es. stanza o letto specifico
       </span>
@@ -50,10 +50,10 @@ $d    = $form_data;
 
     <div class="flex-center gap-md mt-xl">
       <button type="submit" class="btn btn--primary">
-        <?= $edit ? 'Salva modifiche' : 'Aggiungi ubicazione' ?>
+        <?= $edit ? 'Salva modifiche' : 'Aggiungi reparto' ?>
       </button>
       <a href="<?= APP_URL ?>/ubicazioni?id_struttura=<?= $id_struttura ?>"
-         class="btn btn--outline">Annulla</a>
+        class="btn btn--outline">Annulla</a>
     </div>
 
   </form>
