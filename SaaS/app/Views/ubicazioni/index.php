@@ -6,7 +6,7 @@
 
 <div class="page-header">
   <div>
-    <h1>Ubicazioni</h1>
+    <h1>Reparti</h1>
     <div class="page-header-sub"><?= htmlspecialchars($struttura['ragione_sociale']) ?></div>
   </div>
   <div class="flex-center gap-sm">

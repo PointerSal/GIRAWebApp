@@ -19,8 +19,7 @@ class StrutturaController
         // Filtro opzionale ?stato=attiva|sospesa|tutte
         $filtri_validi = ['tutte', 'attiva', 'sospesa'];
         $filtro = in_array($_GET['stato'] ?? '', $filtri_validi) ? $_GET['stato'] : 'tutte';
-        $where  = $filtro === 'attiva'  ? 'WHERE s.attiva = 1' :
-                 ($filtro === 'sospesa' ? 'WHERE s.attiva = 0' : '');
+        $where  = $filtro === 'attiva'  ? 'WHERE s.attiva = 1' : ($filtro === 'sospesa' ? 'WHERE s.attiva = 0' : '');
 
         $strutture = $db->query(
             "SELECT s.*,
@@ -69,7 +68,7 @@ class StrutturaController
 
         $db = Database::getInstance();
 
-        // Ubicazioni
+        // Reparti
         $ubicazioni = $db->prepare(
             'SELECT u.*, COUNT(d.id) AS tot_device
                FROM gir_ubicazione u
@@ -180,7 +179,6 @@ class StrutturaController
             $_SESSION['successo'] = 'Struttura "' . $dati['ragione_sociale'] . '" creata con successo.';
             header('Location: ' . APP_URL . '/strutture/show/' . $id);
             exit;
-
         } catch (\Throwable $e) {
             $msg = str_contains($e->getMessage(), 'partita_iva')
                 ? 'Partita IVA già registrata.'
@@ -245,7 +243,6 @@ class StrutturaController
             $_SESSION['successo'] = 'Struttura aggiornata.';
             header('Location: ' . APP_URL . '/strutture/show/' . $id);
             exit;
-
         } catch (\Throwable $e) {
             $msg = str_contains($e->getMessage(), 'partita_iva')
                 ? 'Partita IVA già registrata.'

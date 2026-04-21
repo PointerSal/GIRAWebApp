@@ -1,5 +1,5 @@
 <div class="page-header">
-    <h1>Ubicazioni</h1>
+    <h1>Reparti</h1>
 </div>
 
 <p class="section-label">Seleziona una struttura</p>

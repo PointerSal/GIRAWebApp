@@ -119,8 +119,10 @@ foreach ($data['devices'] as $dev) {
     $stato = (int)$g['stato'];
 
     // Decodifica byte stato
-    // bit 0:   pulsante (0/1)
-    $pulsante = (int)($stato & 0x01);
+    // bit 0: pulsante — in realtà nel blocco Service Data, non Manufacturer
+    // TODO: implementare lettura da Service Data quando disponibile
+    // $pulsante = (int)($stato & 0x01);
+    $pulsante = 0;
 
     $batteria = $g['batteria']; // null = N/A
     //$batteria = (int)round((($stato >> 1) & 0x7F) / 127 * 100);

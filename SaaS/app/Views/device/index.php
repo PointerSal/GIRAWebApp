@@ -19,7 +19,7 @@ asort($strutture_uniche);
 
 <div class="page-header">
   <div>
-    <h1>Device</h1>
+    <h1>Dispositivi</h1>
     <div class="page-header-sub"><?= count($device_filtrati) ?> sensori<?= $filtro_struttura ? ' · ' . htmlspecialchars($strutture_uniche[$filtro_struttura] ?? '') : '' ?></div>
   </div>
   <a href="<?= APP_URL ?>/device/crea<?= $filtro_struttura ? '?id_struttura=' . $filtro_struttura : '' ?>" class="btn btn--primary">+ Nuovo device</a>

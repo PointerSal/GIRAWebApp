@@ -19,17 +19,17 @@ include VIEW_PATH . 'layout/header.php';
 <div class="card" style="margin-bottom:var(--space-xl);">
   <p class="section-label">Indice</p>
   <div style="display:flex; flex-direction:column; gap:6px;">
-    <a href="#cos-e-gira"       style="color:var(--green); font-size:0.82rem;">1. Cos'è GIRA</a>
-    <a href="#ruoli"            style="color:var(--green); font-size:0.82rem;">2. Ruoli utente</a>
-    <a href="#dashboard"        style="color:var(--green); font-size:0.82rem;">3. Dashboard</a>
-    <a href="#alert"            style="color:var(--green); font-size:0.82rem;">4. Alert</a>
-    <a href="#soglie"           style="color:var(--green); font-size:0.82rem;">5. Soglie e silenzio notturno</a>
-    <a href="#device"           style="color:var(--green); font-size:0.82rem;">6. Device e sensori</a>
-    <a href="#ubicazioni"       style="color:var(--green); font-size:0.82rem;">7. Ubicazioni</a>
-    <a href="#utenti"           style="color:var(--green); font-size:0.82rem;">8. Gestione utenti</a>
-    <a href="#strutture"        style="color:var(--green); font-size:0.82rem;">9. Strutture</a>
-    <a href="#posizioni"        style="color:var(--green); font-size:0.82rem;">10. Posizioni rilevate</a>
-    <a href="#primo-accesso"    style="color:var(--green); font-size:0.82rem;">11. Primo accesso</a>
+    <a href="#cos-e-gira" style="color:var(--green); font-size:0.82rem;">1. Cos'è GIRA</a>
+    <a href="#ruoli" style="color:var(--green); font-size:0.82rem;">2. Ruoli utente</a>
+    <a href="#dashboard" style="color:var(--green); font-size:0.82rem;">3. Dashboard</a>
+    <a href="#alert" style="color:var(--green); font-size:0.82rem;">4. Alert</a>
+    <a href="#soglie" style="color:var(--green); font-size:0.82rem;">5. Soglie e silenzio notturno</a>
+    <a href="#device" style="color:var(--green); font-size:0.82rem;">6. Device e sensori</a>
+    <a href="#ubicazioni" style="color:var(--green); font-size:0.82rem;">7. Reparti</a>
+    <a href="#utenti" style="color:var(--green); font-size:0.82rem;">8. Gestione utenti</a>
+    <a href="#strutture" style="color:var(--green); font-size:0.82rem;">9. Strutture</a>
+    <a href="#posizioni" style="color:var(--green); font-size:0.82rem;">10. Posizioni rilevate</a>
+    <a href="#primo-accesso" style="color:var(--green); font-size:0.82rem;">11. Primo accesso</a>
   </div>
 </div>
 
@@ -57,18 +57,18 @@ include VIEW_PATH . 'layout/header.php';
   </p>
 
   <?php
-    $ruoli = [
-      ['Superadmin', 'pill--red',  'Accesso completo a tutte le strutture e funzionalità della piattaforma. Gestisce strutture, piani e configurazioni globali.'],
-      ['Admin',      'pill--warn', 'Gestisce una o più strutture RSA. Può creare utenti, configurare device e ubicazioni, visualizzare tutti gli alert della propria struttura.'],
-      ['Medico',     'pill--ok',   'Visualizza alert e storico posizioni di tutte le strutture assegnate. Non può modificare configurazioni.'],
-      ['Operatore',  'pill--muted','Monitora i device a lui assegnati. Riceve alert, può prenderli in carico e chiuderli.'],
-    ];
-    foreach ($ruoli as [$nome, $pill, $desc]):
+  $ruoli = [
+    ['Superadmin', 'pill--red',  'Accesso completo a tutte le strutture e funzionalità della piattaforma. Gestisce strutture, piani e configurazioni globali.'],
+    ['Admin',      'pill--warn', 'Gestisce una o più strutture RSA. Può creare utenti, configurare device e ubicazioni, visualizzare tutti gli alert della propria struttura.'],
+    ['Medico',     'pill--ok',   'Visualizza alert e storico posizioni di tutte le strutture assegnate. Non può modificare configurazioni.'],
+    ['Operatore',  'pill--muted', 'Monitora i device a lui assegnati. Riceve alert, può prenderli in carico e chiuderli.'],
+  ];
+  foreach ($ruoli as [$nome, $pill, $desc]):
   ?>
-  <div class="table-row" style="margin-bottom:var(--space-sm);">
-    <span class="pill <?= $pill ?>" style="width:80px; flex-shrink:0;"><?= $nome ?></span>
-    <span style="font-size:0.82rem; color:var(--text); line-height:1.6;"><?= $desc ?></span>
-  </div>
+    <div class="table-row" style="margin-bottom:var(--space-sm);">
+      <span class="pill <?= $pill ?>" style="width:80px; flex-shrink:0;"><?= $nome ?></span>
+      <span style="font-size:0.82rem; color:var(--text); line-height:1.6;"><?= $desc ?></span>
+    </div>
   <?php endforeach; ?>
 </div>
 
@@ -101,19 +101,19 @@ include VIEW_PATH . 'layout/header.php';
   </p>
 
   <?php
-    $tipi_alert = [
-      ['🆘 SOS',        'pill--red',  'Pulsante di emergenza premuto dal paziente. Priorità massima.'],
-      ['🔴 Rosso',      'pill--red',  'Paziente in posizione a rischio da oltre ' . (defined('ALERT_ROSSO_MIN') ? ALERT_ROSSO_MIN : 30) . ' minuti. Intervento urgente.'],
-      ['🟠 Arancio',    'pill--warn', 'Paziente in posizione a rischio da oltre ' . (defined('ALERT_ARANCIO_MIN') ? ALERT_ARANCIO_MIN : 15) . ' minuti. Attenzione richiesta.'],
-      ['🔋 Batteria',   'pill--warn', 'Batteria del sensore sotto il ' . (defined('ALERT_BATT_SOGLIA') ? ALERT_BATT_SOGLIA : 20) . '%. Sostituire o ricaricare.'],
-      ['📡 Offline',    'pill--muted','Il sensore non invia dati da oltre 10 minuti. Verificare connessione.'],
-    ];
-    foreach ($tipi_alert as [$nome, $pill, $desc]):
+  $tipi_alert = [
+    ['🆘 SOS',        'pill--red',  'Pulsante di emergenza premuto dal paziente. Priorità massima.'],
+    ['🔴 Rosso',      'pill--red',  'Paziente in posizione a rischio da oltre ' . (defined('ALERT_ROSSO_MIN') ? ALERT_ROSSO_MIN : 30) . ' minuti. Intervento urgente.'],
+    ['🟠 Arancio',    'pill--warn', 'Paziente in posizione a rischio da oltre ' . (defined('ALERT_ARANCIO_MIN') ? ALERT_ARANCIO_MIN : 15) . ' minuti. Attenzione richiesta.'],
+    ['🔋 Batteria',   'pill--warn', 'Batteria del sensore sotto il ' . (defined('ALERT_BATT_SOGLIA') ? ALERT_BATT_SOGLIA : 20) . '%. Sostituire o ricaricare.'],
+    ['📡 Offline',    'pill--muted', 'Il sensore non invia dati da oltre 10 minuti. Verificare connessione.'],
+  ];
+  foreach ($tipi_alert as [$nome, $pill, $desc]):
   ?>
-  <div class="table-row" style="margin-bottom:var(--space-sm);">
-    <span class="pill <?= $pill ?>" style="width:80px; flex-shrink:0; font-size:0.65rem;"><?= $nome ?></span>
-    <span style="font-size:0.82rem; color:var(--text); line-height:1.6;"><?= $desc ?></span>
-  </div>
+    <div class="table-row" style="margin-bottom:var(--space-sm);">
+      <span class="pill <?= $pill ?>" style="width:80px; flex-shrink:0; font-size:0.65rem;"><?= $nome ?></span>
+      <span style="font-size:0.82rem; color:var(--text); line-height:1.6;"><?= $desc ?></span>
+    </div>
   <?php endforeach; ?>
 
   <p class="section-label" style="margin-top:var(--space-xl);">Gestione alert</p>
@@ -125,20 +125,20 @@ include VIEW_PATH . 'layout/header.php';
 
   <p class="section-label" style="margin-top:var(--space-xl);">Chiusura alert per tipo</p>
   <?php
-    $chiusura = [
-      ['🔴 Rosso',      'pill--red',  'Auto-chiusura', 'Automatica quando il paziente cambia posizione. Non può essere chiuso manualmente.'],
-      ['🟠 Arancio',    'pill--warn', 'Auto-chiusura', 'Automatica quando il paziente cambia posizione. Non può essere chiuso manualmente.'],
-      ['🆘 SOS',        'pill--red',  'Manuale',       'L\'operatore deve chiuderlo dopo aver raggiunto e assistito il paziente.'],
-      ['🔋 Batteria',   'pill--warn', 'Manuale',       'Chiudere dopo aver sostituito o ricaricato il sensore.'],
-      ['📡 Offline',    'pill--muted','Automatica',    'Si chiude automaticamente quando il sensore torna online. Può essere chiuso anche manualmente.'],
-    ];
-    foreach ($chiusura as [$nome, $pill, $modo, $desc]):
+  $chiusura = [
+    ['🔴 Rosso',      'pill--red',  'Auto-chiusura', 'Automatica quando il paziente cambia posizione. Non può essere chiuso manualmente.'],
+    ['🟠 Arancio',    'pill--warn', 'Auto-chiusura', 'Automatica quando il paziente cambia posizione. Non può essere chiuso manualmente.'],
+    ['🆘 SOS',        'pill--red',  'Manuale',       'L\'operatore deve chiuderlo dopo aver raggiunto e assistito il paziente.'],
+    ['🔋 Batteria',   'pill--warn', 'Manuale',       'Chiudere dopo aver sostituito o ricaricato il sensore.'],
+    ['📡 Offline',    'pill--muted', 'Automatica',    'Si chiude automaticamente quando il sensore torna online. Può essere chiuso anche manualmente.'],
+  ];
+  foreach ($chiusura as [$nome, $pill, $modo, $desc]):
   ?>
-  <div class="table-row" style="margin-bottom:var(--space-sm); align-items:flex-start;">
-    <span class="pill <?= $pill ?>" style="width:80px; flex-shrink:0; font-size:0.65rem;"><?= $nome ?></span>
-    <span style="font-size:0.72rem; color:var(--muted); width:90px; flex-shrink:0; padding-top:2px;"><?= $modo ?></span>
-    <span style="font-size:0.82rem; color:var(--text); line-height:1.6;"><?= $desc ?></span>
-  </div>
+    <div class="table-row" style="margin-bottom:var(--space-sm); align-items:flex-start;">
+      <span class="pill <?= $pill ?>" style="width:80px; flex-shrink:0; font-size:0.65rem;"><?= $nome ?></span>
+      <span style="font-size:0.72rem; color:var(--muted); width:90px; flex-shrink:0; padding-top:2px;"><?= $modo ?></span>
+      <span style="font-size:0.82rem; color:var(--text); line-height:1.6;"><?= $desc ?></span>
+    </div>
   <?php endforeach; ?>
 
   <p style="font-size:0.85rem; color:var(--muted); margin-top:var(--space-md);">
@@ -208,25 +208,25 @@ include VIEW_PATH . 'layout/header.php';
   </p>
   <p class="section-label" style="margin-top:var(--space-xl);">Stati del sensore</p>
   <?php
-    $stati = [
-      ['OK',       'pill--ok',   'Il sensore sta inviando dati regolarmente.'],
-      ['Offline',  'pill--muted','Il sensore non invia dati da oltre 10 minuti.'],
-      ['Arancio',  'pill--warn', 'Alert di immobilità di attenzione attivo.'],
-      ['Rosso',    'pill--red',  'Alert di immobilità urgente attivo.'],
-      ['🆘 SOS',   'pill--red',  'Pulsante di emergenza premuto.'],
-    ];
-    foreach ($stati as [$nome, $pill, $desc]):
+  $stati = [
+    ['OK',       'pill--ok',   'Il sensore sta inviando dati regolarmente.'],
+    ['Offline',  'pill--muted', 'Il sensore non invia dati da oltre 10 minuti.'],
+    ['Arancio',  'pill--warn', 'Alert di immobilità di attenzione attivo.'],
+    ['Rosso',    'pill--red',  'Alert di immobilità urgente attivo.'],
+    ['🆘 SOS',   'pill--red',  'Pulsante di emergenza premuto.'],
+  ];
+  foreach ($stati as [$nome, $pill, $desc]):
   ?>
-  <div class="table-row" style="margin-bottom:var(--space-sm);">
-    <span class="pill <?= $pill ?>" style="width:80px; flex-shrink:0; font-size:0.65rem;"><?= $nome ?></span>
-    <span style="font-size:0.82rem; color:var(--text); line-height:1.6;"><?= $desc ?></span>
-  </div>
+    <div class="table-row" style="margin-bottom:var(--space-sm);">
+      <span class="pill <?= $pill ?>" style="width:80px; flex-shrink:0; font-size:0.65rem;"><?= $nome ?></span>
+      <span style="font-size:0.82rem; color:var(--text); line-height:1.6;"><?= $desc ?></span>
+    </div>
   <?php endforeach; ?>
 </div>
 
-<!-- 7. Ubicazioni -->
+<!-- 7. Reparti -->
 <div class="card" id="ubicazioni" style="margin-bottom:var(--space-xl);">
-  <p class="section-label">7. Ubicazioni</p>
+  <p class="section-label">7. Reparti</p>
   <p style="font-size:0.85rem; color:var(--text); line-height:1.7;">
     Le ubicazioni definiscono la posizione fisica dei device all'interno della struttura.
     Sono organizzate su due livelli:
@@ -276,20 +276,20 @@ include VIEW_PATH . 'layout/header.php';
     in base ai dati dell'accelerometro.
   </p>
   <?php
-    $posizioni = [
-      ['SUPINO',      '⚠️ A rischio', 'Il paziente è sdraiato con il petto verso l\'alto.'],
-      ['PRONO',       '⚠️ A rischio', 'Il paziente è sdraiato con il petto verso il basso.'],
-      ['LATO_A',      '✅ Sicuro',    'Il paziente è sdraiato su un fianco.'],
-      ['LATO_B',      '✅ Sicuro',    'Il paziente è sdraiato sull\'altro fianco.'],
-      ['SCONOSCIUTO', '⚠️ A rischio', 'Posizione non classificabile (es. seduto con schienale alto). Monitorato come posizione a rischio per sicurezza.'],
-    ];
-    foreach ($posizioni as [$pos, $stato, $desc]):
+  $posizioni = [
+    ['SUPINO',      '⚠️ A rischio', 'Il paziente è sdraiato con il petto verso l\'alto.'],
+    ['PRONO',       '⚠️ A rischio', 'Il paziente è sdraiato con il petto verso il basso.'],
+    ['LATO_A',      '✅ Sicuro',    'Il paziente è sdraiato su un fianco.'],
+    ['LATO_B',      '✅ Sicuro',    'Il paziente è sdraiato sull\'altro fianco.'],
+    ['SCONOSCIUTO', '⚠️ A rischio', 'Posizione non classificabile (es. seduto con schienale alto). Monitorato come posizione a rischio per sicurezza.'],
+  ];
+  foreach ($posizioni as [$pos, $stato, $desc]):
   ?>
-  <div class="table-row" style="margin-bottom:var(--space-sm); align-items:flex-start;">
-    <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--green); width:100px; flex-shrink:0; padding-top:2px;"><?= $pos ?></span>
-    <span style="font-size:0.72rem; width:90px; flex-shrink:0; padding-top:2px; color:<?= str_contains($stato, 'rischio') ? 'var(--amber)' : 'var(--green)' ?>"><?= $stato ?></span>
-    <span style="font-size:0.82rem; color:var(--text); line-height:1.6;"><?= $desc ?></span>
-  </div>
+    <div class="table-row" style="margin-bottom:var(--space-sm); align-items:flex-start;">
+      <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--green); width:100px; flex-shrink:0; padding-top:2px;"><?= $pos ?></span>
+      <span style="font-size:0.72rem; width:90px; flex-shrink:0; padding-top:2px; color:<?= str_contains($stato, 'rischio') ? 'var(--amber)' : 'var(--green)' ?>"><?= $stato ?></span>
+      <span style="font-size:0.82rem; color:var(--text); line-height:1.6;"><?= $desc ?></span>
+    </div>
   <?php endforeach; ?>
   <p style="font-size:0.85rem; color:var(--muted); margin-top:var(--space-md);">
     💡 Un cambio di posizione viene confermato solo dopo <?= defined('MIN_POSIZIONE_MINUTI') ? MIN_POSIZIONE_MINUTI : 3 ?> minuti

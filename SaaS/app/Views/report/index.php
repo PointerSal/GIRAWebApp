@@ -34,7 +34,7 @@ function fmt_min(int $min): string
     <!-- Riga 1: Device su 4 colonne con optgroup per area -->
     <tr>
       <td colspan="4" style="padding:0 0 var(--space-md) 0; vertical-align:top;">
-        <label class="form-label">Device</label>
+        <label class="form-label">Dispositivi</label>
         <select name="id_device[]" class="form-control" multiple size="8" style="height:auto; width:100%;">
           <?php foreach ($device as $dev): ?>
             <?php
@@ -160,7 +160,7 @@ function fmt_min(int $min): string
 
     <!-- Header -->
     <div class="table-row" style="font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid var(--border);">
-      <span style="flex:2; min-width:140px;">Device</span>
+      <span style="flex:2; min-width:140px;">Dispositivi</span>
       <?php if (count($strutture) > 1): ?>
         <span style="flex:1.5; min-width:120px;">Struttura</span>
       <?php endif; ?>

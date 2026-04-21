@@ -13,7 +13,7 @@ $cp = $current_page ?? '';
   <a href="<?= APP_URL ?>/dashboard" class="<?= $cp === 'dashboard'  ? 'attivo' : '' ?>">▦ Dashboard</a>
   <a href="<?= APP_URL ?>/strutture" class="<?= $cp === 'strutture'  ? 'attivo' : '' ?>">🏥 Strutture</a>
   <a href="<?= APP_URL ?>/utenti" class="<?= $cp === 'utenti'     ? 'attivo' : '' ?>">👥 Utenti</a>
-  <a href="<?= APP_URL ?>/device" class="<?= $cp === 'device'     ? 'attivo' : '' ?>">📡 Device</a>
+  <a href="<?= APP_URL ?>/device" class="<?= $cp === 'device'     ? 'attivo' : '' ?>">📡 Dispositivi</a>
 
 <?php elseif (Auth::isAdmin()): ?>
 
@@ -22,8 +22,8 @@ $cp = $current_page ?? '';
   <a href="<?= APP_URL ?>/alert" class="<?= $cp === 'alert'      ? 'attivo' : '' ?>">🔔 Alert</a>
 
   <div class="nav-sezione">Gestione</div>
-  <a href="<?= APP_URL ?>/device" class="<?= $cp === 'device'     ? 'attivo' : '' ?>">📡 Device</a>
-  <a href="<?= APP_URL ?>/ubicazioni" class="<?= $cp === 'ubicazioni' ? 'attivo' : '' ?>">📍 Ubicazioni</a>
+  <a href="<?= APP_URL ?>/device" class="<?= $cp === 'device'     ? 'attivo' : '' ?>">📡 Dispositivi</a>
+  <a href="<?= APP_URL ?>/ubicazioni" class="<?= $cp === 'ubicazioni' ? 'attivo' : '' ?>">📍 Reparti</a>
   <a href="<?= APP_URL ?>/utenti" class="<?= $cp === 'utenti'     ? 'attivo' : '' ?>">👥 Utenti</a>
   <a href="<?= APP_URL ?>/soglie" class="<?= $cp === 'soglie' ? 'attivo' : '' ?>">⚙ Soglie</a>
   <a href="<?= APP_URL ?>/report" class="<?= $cp === 'report'     ? 'attivo' : '' ?>">📊 Report</a>

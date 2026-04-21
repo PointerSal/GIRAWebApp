@@ -28,7 +28,7 @@ class UbicazioneController
                 header('Location: ' . APP_URL . '/ubicazioni?id_struttura=' . $strutture[0]['id']);
                 exit;
             }
-            $page_title   = 'Ubicazioni — GIRA';
+            $page_title   = 'Reparti — GIRA';
             $current_page = 'ubicazioni';
             include VIEW_PATH . 'layout/header.php';
             include VIEW_PATH . 'ubicazioni/scegli_struttura.php';
@@ -52,7 +52,7 @@ class UbicazioneController
         $ubicazioni->execute([':id' => $id_struttura]);
         $ubicazioni = $ubicazioni->fetchAll();
 
-        $page_title   = 'Ubicazioni — ' . $struttura['ragione_sociale'];
+        $page_title   = 'Reparti — ' . $struttura['ragione_sociale'];
         $current_page = 'ubicazioni';
         include VIEW_PATH . 'layout/header.php';
         include VIEW_PATH . 'ubicazioni/index.php';
