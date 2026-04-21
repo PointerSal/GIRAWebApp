@@ -1,5 +1,5 @@
 // GIRA — Service Worker
-const VERSION = 'gira-v1';
+const VERSION = 'gira-v3';
 
 self.addEventListener('install', () => {
     self.skipWaiting();

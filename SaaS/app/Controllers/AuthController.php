@@ -53,6 +53,7 @@ class AuthController
         }
 
         // Login OK — remember token + dashboard
+        $_SESSION['forza_push_sync'] = true;
         Auth::crea_remember_token((int)Auth::utente()['id']);
         header('Location: ' . APP_URL . '/dashboard');
         exit;

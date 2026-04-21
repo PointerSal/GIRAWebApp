@@ -68,6 +68,11 @@
                 });
 
                 await sendSubscription(sub, SUBSCRIBE_URL);
+
+            } else if (window.GIRA_FORZA_PUSH_SYNC === true) {
+                // Re-invia la subscription esistente al server per aggiornare id_utente
+                // (es. dopo logout + login con account diverso sullo stesso browser)
+                await sendSubscription(sub, SUBSCRIBE_URL);
             }
 
             // Espone funzione globale per de-registrarsi (usata da preferenze.php)
