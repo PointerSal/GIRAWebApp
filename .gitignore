@@ -3,6 +3,7 @@
 # File di configurazione contenenti segreti o variabili d'ambiente
 .env
 config.json
+test_push.php
 # Dipendenze (non vanno mai caricate, si usa il package manager)
 node_modules/
 __pycache__/

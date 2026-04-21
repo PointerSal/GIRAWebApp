@@ -87,9 +87,9 @@ class NotificationService
 
         $payload = json_encode([
             'title'               => $titoli[$tipo] ?? 'GIRA Alert',
-            'body'                => ($nome_struttura ? $nome_struttura . ' · ' : '') . $device_str,
+            'body'                => ($nome_struttura ? $nome_struttura . "\n" : '') . $device_str,
             'icon'                => '/assets/img/gira_192x192.png',
-            'badge'               => '/assets/img/gira_192x192.png',
+            'badge'               => '/assets/img/icon_72x72.png',
             'tag'                 => 'gira-' . strtolower($tipo),
             'url'                 => '/alert',
             'requireInteraction'  => in_array($tipo, ['PULSANTE', 'ROSSO']),
