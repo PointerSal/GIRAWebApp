@@ -80,11 +80,16 @@ class NotificationService
             'PULSANTE' => '🆘 SOS — Emergenza',
         ];
 
+        // Recupera nome struttura
+        $stmt_s = $db->prepare('SELECT ragione_sociale FROM gir_struttura WHERE id = :id LIMIT 1');
+        $stmt_s->execute([':id' => $id_struttura]);
+        $nome_struttura = $stmt_s->fetchColumn() ?: '';
+
         $payload = json_encode([
             'title'               => $titoli[$tipo] ?? 'GIRA Alert',
-            'body'                => $device_str,
-            'icon'                => '/assets/img/icon-192.png',
-            'badge'               => '/assets/img/icon-192.png',
+            'body'                => ($nome_struttura ? $nome_struttura . ' · ' : '') . $device_str,
+            'icon'                => '/assets/img/gira_192x192.png',
+            'badge'               => '/assets/img/gira_192x192.png',
             'tag'                 => 'gira-' . strtolower($tipo),
             'url'                 => '/alert',
             'requireInteraction'  => in_array($tipo, ['PULSANTE', 'ROSSO']),

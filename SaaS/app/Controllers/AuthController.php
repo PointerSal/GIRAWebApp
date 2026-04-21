@@ -136,6 +136,11 @@ class AuthController
         $stmt->execute([':id' => $utente['id_ruolo']]);
         $utente['ruolo_nome'] = $stmt->fetchColumn() ?: '';
 
+        // Carica preferenze notifiche
+        $stmt = $db->prepare('SELECT * FROM gir_notifica_preferenze WHERE id_utente = :id LIMIT 1');
+        $stmt->execute([':id' => $utente['id']]);
+        $pref = $stmt->fetch() ?: [];
+
         $errore   = $_SESSION['errore']   ?? null;
         $successo = $_SESSION['successo'] ?? null;
         unset($_SESSION['errore'], $_SESSION['successo']);
@@ -178,6 +183,40 @@ class AuthController
         $_SESSION['utente']['telefono'] = $telefono;
 
         $_SESSION['successo'] = 'Profilo aggiornato.';
+        header('Location: ' . APP_URL . '/auth/profilo');
+        exit;
+    }
+
+    // ----------------------------------------------------------
+    //  POST /auth/preferenze-post
+    // ----------------------------------------------------------
+    public static function preferenzePost(): void
+    {
+        Middleware::richiediLogin();
+
+        $id = Auth::id();
+        $db = Database::getInstance();
+        $db->prepare(
+            'INSERT INTO gir_notifica_preferenze
+                (id_utente, push_attiva, alert_rosso, alert_arancio, alert_batteria, alert_offline)
+             VALUES
+                (:id, :push, :rosso, :arancio, :batt, :offline)
+             ON DUPLICATE KEY UPDATE
+                push_attiva    = VALUES(push_attiva),
+                alert_rosso    = VALUES(alert_rosso),
+                alert_arancio  = VALUES(alert_arancio),
+                alert_batteria = VALUES(alert_batteria),
+                alert_offline  = VALUES(alert_offline)'
+        )->execute([
+            ':id'      => $id,
+            ':push'    => isset($_POST['push_attiva'])    ? 1 : 0,
+            ':rosso'   => isset($_POST['alert_rosso'])    ? 1 : 0,
+            ':arancio' => isset($_POST['alert_arancio'])  ? 1 : 0,
+            ':batt'    => isset($_POST['alert_batteria']) ? 1 : 0,
+            ':offline' => isset($_POST['alert_offline'])  ? 1 : 0,
+        ]);
+
+        $_SESSION['successo'] = 'Preferenze notifiche salvate.';
         header('Location: ' . APP_URL . '/auth/profilo');
         exit;
     }

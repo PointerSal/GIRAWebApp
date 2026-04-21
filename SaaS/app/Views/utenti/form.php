@@ -135,10 +135,6 @@ $d    = $form_data;
 
     <?php if ($edit): ?>
       <div class="flex-center gap-sm" style="margin-top:var(--space-lg); padding-top:var(--space-lg); border-top:1px solid var(--border);">
-        <a href="<?= APP_URL ?>/utenti/preferenze/<?= $utente_target['id'] ?>"
-          class="btn btn--outline" style="font-size:0.78rem;">
-          🔔 Notifiche
-        </a>
         <a href="<?= APP_URL ?>/utenti/reset-pwd/<?= $utente_target['id'] ?>"
           class="btn btn--outline" style="font-size:0.78rem;">
           🔑 Password

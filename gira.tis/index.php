@@ -182,6 +182,8 @@ $routes = [
         'cambia-password-post' => fn() => AuthController::cambiaPasswordPost(),
         'profilo'         => fn() => AuthController::profilo(),
         'profilo-post'    => fn() => AuthController::profiloPost(),
+        'preferenze-post' => fn() => AuthController::preferenzePost(),
+        9
     ],
 
     // ----------------------------------------------------------
