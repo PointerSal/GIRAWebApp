@@ -15,7 +15,9 @@ foreach ($alert as $a) {
     <h1>Alert attivi</h1>
     <div class="page-header-sub" id="gira-alert-count"><?= count($alert) ?> alert apert<?= count($alert) === 1 ? 'o' : 'i' ?></div>
   </div>
-  <a href="<?= APP_URL ?>/alert/storico" class="btn btn--outline">Storico →</a>
+  <?php if (!Auth::isOperatore()): ?>
+    <a href="<?= APP_URL ?>/alert/storico" class="btn btn--outline">Storico →</a>
+  <?php endif; ?>
 </div>
 
 <!-- Contatori per tipo -->

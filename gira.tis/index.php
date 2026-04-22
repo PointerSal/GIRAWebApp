@@ -288,9 +288,9 @@ $routes = [
     // INGEST — riceve i pacchetti HTTP POST dal gateway
     // NON richiede autenticazione utente — usa API key
     // ----------------------------------------------------------
-    'ingest' => [
-        'index' => fn() => IngestController::index(),
-    ],
+    // 'ingest' => [
+    //     'index' => fn() => IngestController::index(),
+    // ],
 
     // ----------------------------------------------------------
     // PUSH — gestione subscription PWA
