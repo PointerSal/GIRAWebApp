@@ -90,7 +90,9 @@ class NotificationService
             'body'                => ($nome_struttura ? $nome_struttura . "\n" : '') . $device_str,
             'icon'                => '/assets/img/gira_192x192.png',
             'badge'               => '/assets/img/icon_72x72.png',
-            'tag'                 => 'gira-' . strtolower($tipo),
+            'tag'                 => in_array($tipo, ['ROSSO', 'ARANCIO', 'PULSANTE'])
+                ? 'gira-' . strtolower($tipo) . '-' . $id_device
+                : 'gira-' . strtolower($tipo),
             'url'                 => '/alert',
             'requireInteraction'  => in_array($tipo, ['PULSANTE', 'ROSSO']),
         ]);

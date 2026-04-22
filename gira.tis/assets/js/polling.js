@@ -75,21 +75,36 @@ const GiraPolling = (() => {
                 const ids_ricevuti = alert.map(a => a.id);
                 const righe_esistenti = container.querySelectorAll('[data-alert-id]');
 
-                // Rimuovi righe non più presenti
-                righe_esistenti.forEach(riga => {
-                    if (!ids_ricevuti.includes(parseInt(riga.dataset.alertId))) {
-                        riga.remove();
-                    }
-                });
+                // Rimuovi righe non più presenti (solo se l'API ha risposto con dati validi)
+                if (ids_ricevuti.length > 0 || alert.length === 0) {
+                    righe_esistenti.forEach(riga => {
+                        if (!ids_ricevuti.includes(parseInt(riga.dataset.alertId))) {
+                            riga.remove();
+                        }
+                    });
+                }
 
-                // Aggiorna minuti per ogni riga esistente
+                // Controlla se ci sono nuovi alert non ancora in pagina
+                let haNewAlert = false;
                 alert.forEach(a => {
                     const riga = container.querySelector('[data-alert-id="' + a.id + '"]');
                     if (riga) {
                         const minutiEl = riga.querySelector('.gira-minuti');
                         if (minutiEl) minutiEl.textContent = a.minuti_aperti + ' min';
+                    } else {
+                        haNewAlert = true;
                     }
                 });
+                
+                // Se ci sono nuovi alert → ricarica la pagina per mostrare le righe complete
+                // Debug
+                if (haNewAlert) {
+                    //console.log('Nuovo alert rilevato — tentativo reload');
+                    //console.log('IDs ricevuti:', ids_ricevuti);
+                    //console.log('IDs in pagina:', Array.from(righe_esistenti).map(r => parseInt(r.dataset.alertId)));
+                    window.location.href = window.location.href;
+                    return;
+                }
 
                 // Aggiorna contatori per tipo
                 _aggiornaContatoriTipo(alert);
