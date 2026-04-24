@@ -381,13 +381,23 @@
       }
     }
 
+    .struttura-icona {
+      display: none;
+    }
+
     @media (max-width: 600px) {
-      .main-content {
-        padding: var(--space-md);
+      .struttura-icona {
+        display: inline;
       }
 
-      .stat-grid {
-        grid-template-columns: 1fr 1fr;
+      .struttura-select {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        opacity: 0 !important;
+        cursor: pointer !important;
       }
     }
   </style>
@@ -405,6 +415,7 @@
     <div class="mob-drawer-footer">
       <a href="javascript:void(0);" id="install-btn-mob" style="display:none;">📲 Installa app</a>
       <a href="<?= APP_URL ?>/auth/profilo">⚙ Profilo</a>
+      <a href="javascript:void(0);" onclick="toggleTema(); chiudiMenu();" id="tema-drawer-link">☀ Tema chiaro</a>
       <a href="<?= APP_URL ?>/auth/logout">🚪 Esci</a>
     </div>
   </div>
@@ -414,19 +425,21 @@
     <!-- ── TOPBAR ───────────────────────────────────────────────── -->
     <header class="topbar">
       <div class="topbar-brand">
-        <span style="color:var(--text);">GI</span><span>RA</span>
-        <?php
-        $ruolo = Auth::ruolo();
-        if ($ruolo === RUOLO_SUPERADMIN):
-        ?>
-          <span class="topbar-badge">Superadmin</span>
-        <?php elseif ($ruolo === RUOLO_ADMIN): ?>
-          <span class="topbar-badge topbar-badge--admin">Admin</span>
-        <?php elseif ($ruolo === RUOLO_MEDICO): ?>
-          <span class="topbar-badge topbar-badge--medico">Medico</span>
-        <?php elseif ($ruolo === RUOLO_UTENTE): ?>
-          <span class="topbar-badge topbar-badge--utente">Operatore</span>
-        <?php endif; ?>
+        <a href="<?= APP_URL ?>/dashboard" style="text-decoration:none; display:flex; align-items:center; gap:8px; color:inherit;">
+          <span style="color:var(--text);">GI</span><span style="color:var(--green);">RA</span>
+          <?php
+          $ruolo = Auth::ruolo();
+          if ($ruolo === RUOLO_SUPERADMIN):
+          ?>
+            <span class="topbar-badge">Superadmin</span>
+          <?php elseif ($ruolo === RUOLO_ADMIN): ?>
+            <span class="topbar-badge topbar-badge--admin">Admin</span>
+          <?php elseif ($ruolo === RUOLO_MEDICO): ?>
+            <span class="topbar-badge topbar-badge--medico">Medico</span>
+          <?php elseif ($ruolo === RUOLO_UTENTE): ?>
+            <span class="topbar-badge topbar-badge--utente">Operatore</span>
+          <?php endif; ?>
+        </a>
       </div>
 
       <div class="topbar-user">
@@ -442,24 +455,25 @@
           $stmt->execute($strutture_utente);
           $strutture_lista = $stmt->fetchAll();
         ?>
-          <form method="POST" action="<?= APP_URL ?>/struttura-attiva/set" style="margin:0;">
+          <form method="POST" action="<?= APP_URL ?>/struttura-attiva/set" style="margin:0; position:relative; display:inline-block;">
             <input type="hidden" name="redirect" value="<?= htmlspecialchars(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) ?>" />
+            <span class="struttura-icona">🏥</span>
             <select name="id_struttura"
               onchange="this.form.submit()"
+              class="struttura-select"
               style="background:var(--surface); border:1px solid var(--border); color:var(--text);
-                 font-family:var(--font-mono); font-size:0.72rem; padding:4px 8px;
-                 border-radius:var(--radius-sm); cursor:pointer;">
+                font-family:var(--font-mono); font-size:0.72rem; padding:4px 8px;
+                border-radius:var(--radius-sm); cursor:pointer;">
               <?php foreach ($strutture_lista as $s): ?>
                 <option value="<?= $s['id'] ?>"
                   <?= (int)$s['id'] === $attiva ? 'selected' : '' ?>>
-                  🏥 <?= htmlspecialchars($s['ragione_sociale']) ?>
+                  <?= htmlspecialchars($s['ragione_sociale']) ?>
                 </option>
               <?php endforeach; ?>
             </select>
           </form>
         <?php endif; ?>
         <span><?= htmlspecialchars(Auth::utente()['nome'] . ' ' . Auth::utente()['cognome']) ?></span>
-        <button class="tema-toggle" id="tema-toggle" title="Cambia tema" onclick="toggleTema()">☀</button>
         <a href="<?= APP_URL ?>/auth/logout" class="topbar-esci">Esci</a>
         <button class="btn-hamburger" onclick="apriMenu()" aria-label="Menu">☰</button>
       </div>
@@ -479,6 +493,12 @@
           style="display:block; font-size:0.72rem; color:var(--muted); text-decoration:none; padding: 4px 0;"
           onmouseover="this.style.color='var(--green)'" onmouseout="this.style.color='var(--muted)'">
           ⚙ Profilo
+        </a>
+        <a href="javascript:void(0);" onclick="toggleTema()"
+          id="tema-sidebar-link"
+          style="display:block; font-size:0.72rem; color:var(--muted); text-decoration:none; padding: 4px 0; margin-top:4px;"
+          onmouseover="this.style.color='var(--green)'" onmouseout="this.style.color='var(--muted)'">
+          ☀ Tema chiaro
         </a>
       </div>
     </aside>
@@ -565,6 +585,25 @@
           applicaTema(saved === 'light');
 
           // Toggle
+          function aggiornaTemaLinks(light) {
+            const sidebarLink = document.getElementById('tema-sidebar-link');
+            const drawerLink = document.getElementById('tema-drawer-link');
+            const label = light ? '☾ Tema scuro' : '☀ Tema chiaro';
+            if (sidebarLink) sidebarLink.textContent = label;
+            if (drawerLink) drawerLink.textContent = label;
+          }
+
+          function applicaTema(light) {
+            if (light) {
+              body.classList.add('tema-light');
+              if (toggle) toggle.textContent = '☾';
+            } else {
+              body.classList.remove('tema-light');
+              if (toggle) toggle.textContent = '☀';
+            }
+            aggiornaTemaLinks(light);
+          }
+
           window.toggleTema = function() {
             const isLight = body.classList.contains('tema-light');
             localStorage.setItem(STORAGE_KEY, isLight ? 'dark' : 'light');
