@@ -582,3 +582,57 @@ footer {
 
   .table-row { flex-wrap: wrap; }
 }
+
+
+/* ── TEMA LIGHT ─────────────────────────────────────────────── */
+body.tema-light {
+  --bg:           #f0f4f2;
+  --surface:      #ffffff;
+  --surface-hover:#e8f0ec;
+  --border:       #c8d8d2;
+
+  --green:        #1a8a4a;
+  --green-dim:    #a8d8bc;
+  --amber:        #c47a00;
+  --red:          #c0392b;
+  --blue:         #1a7fa8;
+
+  --text:         #1a2820;
+  --muted:        #5a7a6e;
+  --white:        #0f1f18;
+
+  --alert-ok-bg:     rgba(26, 138, 74, 0.10);
+  --alert-ok-color:  var(--green);
+  --alert-warn-bg:   rgba(196, 122, 0, 0.10);
+  --alert-warn-color:var(--amber);
+  --alert-red-bg:    rgba(192, 57, 43, 0.10);
+  --alert-red-color: var(--red);
+}
+
+/* Nasconde griglia e texture in tema light */
+body.tema-light::before,
+body.tema-light::after {
+  display: none;
+}
+
+/* Toggle tema — pulsante in topbar */
+.tema-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: var(--radius-sm);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: border-color var(--transition), color var(--transition);
+  flex-shrink: 0;
+}
+
+.tema-toggle:hover {
+  border-color: var(--green);
+  color: var(--green);
+}

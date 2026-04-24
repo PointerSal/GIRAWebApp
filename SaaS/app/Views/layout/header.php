@@ -459,6 +459,7 @@
           </form>
         <?php endif; ?>
         <span><?= htmlspecialchars(Auth::utente()['nome'] . ' ' . Auth::utente()['cognome']) ?></span>
+        <button class="tema-toggle" id="tema-toggle" title="Cambia tema" onclick="toggleTema()">☀</button>
         <a href="<?= APP_URL ?>/auth/logout" class="topbar-esci">Esci</a>
         <button class="btn-hamburger" onclick="apriMenu()" aria-label="Menu">☰</button>
       </div>
@@ -543,4 +544,31 @@
         window.addEventListener('appinstalled', () => {
           deferredPrompt = null;
         });
+        // ── TEMA LIGHT/DARK ──────────────────────────────────────
+        (function() {
+          const STORAGE_KEY = 'gira-tema';
+          const body = document.body;
+          const toggle = document.getElementById('tema-toggle');
+
+          function applicaTema(light) {
+            if (light) {
+              body.classList.add('tema-light');
+              if (toggle) toggle.textContent = '☾';
+            } else {
+              body.classList.remove('tema-light');
+              if (toggle) toggle.textContent = '☀';
+            }
+          }
+
+          // Applica tema salvato al caricamento
+          const saved = localStorage.getItem(STORAGE_KEY);
+          applicaTema(saved === 'light');
+
+          // Toggle
+          window.toggleTema = function() {
+            const isLight = body.classList.contains('tema-light');
+            localStorage.setItem(STORAGE_KEY, isLight ? 'dark' : 'light');
+            applicaTema(!isLight);
+          };
+        })();
       </script>

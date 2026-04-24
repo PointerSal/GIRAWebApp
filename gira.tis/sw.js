@@ -1,5 +1,5 @@
 // GIRA — Service Worker
-const VERSION = 'gira-v3';
+const VERSION = 'gira-v5';
 
 self.addEventListener('install', () => {
     self.skipWaiting();
@@ -27,8 +27,8 @@ self.addEventListener('push', e => {
     const title   = data.title   ?? 'GIRA Alert';
     const options = {
         body:    data.body    ?? '',
-        icon:    data.icon    ?? '/assets/img/icon-192.png',
-        badge:   data.badge   ?? '/assets/img/icon-192.png',
+        icon:    data.icon    ?? '/assets/img/gira_192x192.png',
+        badge:   data.badge   ?? '/assets/img/icon_72x72.png',
         tag:     data.tag     ?? 'gira-alert',
         data:    { url: data.url ?? '/' },
         requireInteraction: data.requireInteraction ?? false,
