@@ -42,7 +42,7 @@ class DeviceController
                   GROUP BY d.id, s.ragione_sociale, u.area, u.subarea,
                            ds.posizione, ds.stato_batt, ds.stato_segnale,
                            ds.ultimo_contatto
-                  ORDER BY s.ragione_sociale, d.label, d.mac"
+                  ORDER BY u.area, u.subarea, d.label, d.mac"
             );
             $stmt->execute($strutture_ids);
             $device = $stmt->fetchAll();

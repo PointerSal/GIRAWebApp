@@ -60,13 +60,6 @@ asort($strutture_uniche);
 
         <span class="table-row__label">
           <strong><?= htmlspecialchars($d['label'] ?? $d['mac']) ?></strong>
-          <span style="color:var(--muted); font-size:0.72rem; margin-left:8px; font-family:var(--font-mono);">
-            <?= htmlspecialchars($d['mac']) ?>
-          </span>
-        </span>
-
-        <span class="table-row__meta" style="min-width:140px;">
-          🏥 <?= htmlspecialchars($d['struttura_nome']) ?>
         </span>
 
         <span class="table-row__meta" style="min-width:140px;">

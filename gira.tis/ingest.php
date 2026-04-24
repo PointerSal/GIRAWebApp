@@ -286,7 +286,30 @@ function gestisci_posizione(PDO $db, int $idDevice, string $nuovaPos): void
 
     // Verifica soglia percentuale
     $perc = ($conferme / count($recenti)) * 100;
-    if ($perc < SOGLIA_CONFERMA_PERC) return; // troppo rumore → cambio scartato
+    if ($perc < SOGLIA_CONFERMA_PERC) {
+        // Cambio non confermato — ma se la posizione attuale è quasi assente
+        // nei campioni recenti, il log corrente è stantio → chiudilo senza aprirne uno nuovo.
+        // Questo evita che analizza_alert() trovi log vecchi e generi falsi alert.
+        $perc_corrente = 0;
+        foreach ($recenti as $r) {
+            if (calcola_posizione((int)$r['x'], (int)$r['y'], (int)$r['z']) === $corrente['posizione']) {
+                $perc_corrente++;
+            }
+        }
+        $perc_corrente = ($perc_corrente / count($recenti)) * 100;
+
+        // Se la posizione del log aperto è scesa sotto il 10% dei campioni recenti → chiudi
+        if ($perc_corrente < 10) {
+            $db->prepare(
+                "UPDATE gir_posizione_log
+                 SET terminato_alle = NOW(),
+                     durata_minuti  = GREATEST(1, TIMESTAMPDIFF(MINUTE, iniziato_alle, NOW()))
+                 WHERE id = :id"
+            )->execute([':id' => $corrente['id']]);
+        }
+
+        return;
+    }
 
     // ── CAMBIO CONFERMATO ────────────────────────────────────
 
