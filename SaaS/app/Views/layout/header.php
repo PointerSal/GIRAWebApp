@@ -399,6 +399,10 @@
         opacity: 0 !important;
         cursor: pointer !important;
       }
+
+      .topbar-cognome {
+        display: none;
+      }
     }
   </style>
   <?php if (isset($extra_css)) echo $extra_css; ?>
@@ -425,21 +429,21 @@
     <!-- ── TOPBAR ───────────────────────────────────────────────── -->
     <header class="topbar">
       <div class="topbar-brand">
-        <a href="<?= APP_URL ?>/dashboard" style="text-decoration:none; display:flex; align-items:center; gap:8px; color:inherit;">
+        <a href="<?= APP_URL ?>/dashboard" style="text-decoration:none; display:flex; align-items:center; gap:0; color:inherit;">
           <span style="color:var(--text);">GI</span><span style="color:var(--green);">RA</span>
-          <?php
-          $ruolo = Auth::ruolo();
-          if ($ruolo === RUOLO_SUPERADMIN):
-          ?>
-            <span class="topbar-badge">Superadmin</span>
-          <?php elseif ($ruolo === RUOLO_ADMIN): ?>
-            <span class="topbar-badge topbar-badge--admin">Admin</span>
-          <?php elseif ($ruolo === RUOLO_MEDICO): ?>
-            <span class="topbar-badge topbar-badge--medico">Medico</span>
-          <?php elseif ($ruolo === RUOLO_UTENTE): ?>
-            <span class="topbar-badge topbar-badge--utente">Operatore</span>
-          <?php endif; ?>
         </a>
+        <?php
+        $ruolo = Auth::ruolo();
+        if ($ruolo === RUOLO_SUPERADMIN):
+        ?>
+          <span class="topbar-badge">Superadmin</span>
+        <?php elseif ($ruolo === RUOLO_ADMIN): ?>
+          <span class="topbar-badge topbar-badge--admin">Admin</span>
+        <?php elseif ($ruolo === RUOLO_MEDICO): ?>
+          <span class="topbar-badge topbar-badge--medico">Medico</span>
+        <?php elseif ($ruolo === RUOLO_UTENTE): ?>
+          <span class="topbar-badge topbar-badge--utente">Operatore</span>
+        <?php endif; ?>
       </div>
 
       <div class="topbar-user">
@@ -473,7 +477,10 @@
             </select>
           </form>
         <?php endif; ?>
-        <span><?= htmlspecialchars(Auth::utente()['nome'] . ' ' . Auth::utente()['cognome']) ?></span>
+        <span class="topbar-username">
+          <span class="topbar-nome"><?= htmlspecialchars(Auth::utente()['nome']) ?></span>
+          <span class="topbar-cognome"><?= htmlspecialchars(' ' . Auth::utente()['cognome']) ?></span>
+        </span>
         <a href="<?= APP_URL ?>/auth/logout" class="topbar-esci">Esci</a>
         <button class="btn-hamburger" onclick="apriMenu()" aria-label="Menu">☰</button>
       </div>

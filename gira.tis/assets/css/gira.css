@@ -609,6 +609,20 @@ body.tema-light {
   --alert-red-color: var(--red);
 }
 
+body.tema-light .topbar-badge {
+  color: #fff !important;
+}
+body.tema-light .topbar-badge--admin {
+  color: #000 !important;
+}
+body.tema-light .topbar-badge--medico {
+  color: #fff !important;
+}
+body.tema-light .topbar-badge--utente {
+  background: #5a7a6e !important;
+  color: #fff !important;
+}
+
 /* Nasconde griglia e texture in tema light */
 body.tema-light::before,
 body.tema-light::after {
