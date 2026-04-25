@@ -80,7 +80,7 @@ $d    = $form_data;
       <select id="id_ruolo" name="id_ruolo" required>
         <?php foreach ($ruoli as $r): ?>
           <option value="<?= $r['id'] ?>"
-            <?= (int)($d['id_ruolo'] ?? RUOLO_UTENTE) === (int)$r['id'] ? 'selected' : '' ?>>
+            <?= (int)($d['id_ruolo'] ?? RUOLO_OSA) === (int)$r['id'] ? 'selected' : '' ?>>
             <?= htmlspecialchars(ucfirst($r['nome'])) ?>
           </option>
         <?php endforeach; ?>

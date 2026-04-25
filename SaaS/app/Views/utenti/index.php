@@ -37,7 +37,7 @@
       RUOLO_SUPERADMIN => 'Superadmin',
       RUOLO_ADMIN      => 'Admin',
       RUOLO_MEDICO     => 'Medico',
-      RUOLO_UTENTE     => 'Operatore',
+      RUOLO_OSA     => 'OSA',
     ];
     foreach ($ruoli_filtro as $rid => $rlabel):
       $url_ruolo = APP_URL . '/utenti?' .

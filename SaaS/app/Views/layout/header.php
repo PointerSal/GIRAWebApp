@@ -441,8 +441,8 @@
           <span class="topbar-badge topbar-badge--admin">Admin</span>
         <?php elseif ($ruolo === RUOLO_MEDICO): ?>
           <span class="topbar-badge topbar-badge--medico">Medico</span>
-        <?php elseif ($ruolo === RUOLO_UTENTE): ?>
-          <span class="topbar-badge topbar-badge--utente">Operatore</span>
+        <?php elseif ($ruolo === RUOLO_OSA): ?>
+          <span class="topbar-badge topbar-badge--utente">OSA</span>
         <?php endif; ?>
       </div>
 

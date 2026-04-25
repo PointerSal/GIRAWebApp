@@ -19,18 +19,18 @@ include VIEW_PATH . 'layout/header.php';
 <div class="card" style="margin-bottom:var(--space-xl);">
   <p class="section-label">Indice</p>
   <div style="display:flex; flex-direction:column; gap:6px;">
-    <a href="#cos-e-gira"   style="color:var(--green); font-size:0.82rem;">1. Cos'è GIRA</a>
-    <a href="#ruoli"        style="color:var(--green); font-size:0.82rem;">2. Ruoli utente</a>
-    <a href="#dashboard"    style="color:var(--green); font-size:0.82rem;">3. Dashboard</a>
-    <a href="#alert"        style="color:var(--green); font-size:0.82rem;">4. Alert</a>
-    <a href="#soglie"       style="color:var(--green); font-size:0.82rem;">5. Soglie e silenzio notturno</a>
-    <a href="#dispositivi"  style="color:var(--green); font-size:0.82rem;">6. Dispositivi e sensori</a>
-    <a href="#reparti"      style="color:var(--green); font-size:0.82rem;">7. Reparti</a>
-    <a href="#utenti"       style="color:var(--green); font-size:0.82rem;">8. Gestione utenti</a>
-    <a href="#strutture"    style="color:var(--green); font-size:0.82rem;">9. Strutture</a>
-    <a href="#posizioni"    style="color:var(--green); font-size:0.82rem;">10. Posizioni rilevate</a>
-    <a href="#notifiche"    style="color:var(--green); font-size:0.82rem;">11. Notifiche push</a>
-    <a href="#report"       style="color:var(--green); font-size:0.82rem;">12. Report</a>
+    <a href="#cos-e-gira" style="color:var(--green); font-size:0.82rem;">1. Cos'è GIRA</a>
+    <a href="#ruoli" style="color:var(--green); font-size:0.82rem;">2. Ruoli utente</a>
+    <a href="#dashboard" style="color:var(--green); font-size:0.82rem;">3. Dashboard</a>
+    <a href="#alert" style="color:var(--green); font-size:0.82rem;">4. Alert</a>
+    <a href="#soglie" style="color:var(--green); font-size:0.82rem;">5. Soglie e silenzio notturno</a>
+    <a href="#dispositivi" style="color:var(--green); font-size:0.82rem;">6. Dispositivi e sensori</a>
+    <a href="#reparti" style="color:var(--green); font-size:0.82rem;">7. Reparti</a>
+    <a href="#utenti" style="color:var(--green); font-size:0.82rem;">8. Gestione utenti</a>
+    <a href="#strutture" style="color:var(--green); font-size:0.82rem;">9. Strutture</a>
+    <a href="#posizioni" style="color:var(--green); font-size:0.82rem;">10. Posizioni rilevate</a>
+    <a href="#notifiche" style="color:var(--green); font-size:0.82rem;">11. Notifiche push</a>
+    <a href="#report" style="color:var(--green); font-size:0.82rem;">12. Report</a>
     <a href="#primo-accesso" style="color:var(--green); font-size:0.82rem;">13. Primo accesso</a>
   </div>
 </div>
@@ -63,7 +63,7 @@ include VIEW_PATH . 'layout/header.php';
     ['Superadmin', 'pill--red',   'Accesso completo a tutte le strutture e funzionalità della piattaforma. Gestisce strutture, piani e configurazioni globali.'],
     ['Admin',      'pill--warn',  'Gestisce una o più strutture RSA. Può creare utenti, configurare dispositivi e reparti, visualizzare tutti gli alert della propria struttura e generare report.'],
     ['Medico',     'pill--ok',    'Visualizza alert, storico e report di tutte le strutture assegnate. Non può gestire o chiudere alert, né modificare configurazioni.'],
-    ['Operatore',  'pill--muted', 'Monitora i dispositivi a lui assegnati. Riceve alert, può prenderli in carico e chiuderli.'],
+    ['OSA',  'pill--muted', 'Monitora i dispositivi a lui assegnati. Riceve alert, può prenderli in carico e chiuderli.'],
   ];
   foreach ($ruoli as [$nome, $pill, $desc]):
   ?>
@@ -88,7 +88,7 @@ include VIEW_PATH . 'layout/header.php';
     <li><strong>Superadmin</strong> — panoramica globale di tutte le strutture, contatori e alert urgenti.</li>
     <li><strong>Admin</strong> — contatori della struttura attiva, stato in tempo reale di tutti i dispositivi con icone letto colorate per stato.</li>
     <li><strong>Medico</strong> — alert aperti e storico recente delle strutture assegnate.</li>
-    <li><strong>Operatore</strong> — stato dei soli dispositivi assegnati, con indicazione di alert attivi.</li>
+    <li><strong>OSA</strong> — stato dei soli dispositivi assegnati, con indicazione di alert attivi.</li>
   </ul>
   <p style="font-size:0.85rem; color:var(--muted); margin-top:var(--space-md);">
     💡 Se sei associato a più strutture, usa il selettore in alto a destra per filtrare la visualizzazione.
@@ -204,7 +204,7 @@ include VIEW_PATH . 'layout/header.php';
   <?php
   $stati = [
     ['OK',      'pill--ok',   'Il sensore sta inviando dati regolarmente.'],
-    ['Offline', 'pill--muted','Il sensore non invia dati da oltre 10 minuti.'],
+    ['Offline', 'pill--muted', 'Il sensore non invia dati da oltre 10 minuti.'],
     ['Arancio', 'pill--warn', 'Alert di immobilità di attenzione attivo.'],
     ['Rosso',   'pill--red',  'Alert di immobilità urgente attivo.'],
     ['🆘 SOS',  'pill--red',  'Pulsante di emergenza premuto.'],

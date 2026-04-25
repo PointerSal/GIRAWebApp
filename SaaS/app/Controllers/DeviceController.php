@@ -383,7 +383,7 @@ class DeviceController
             'DELETE FROM gir_utente_device WHERE id_device = :did AND id_utente = :uid'
         )->execute([':did' => $id, ':uid' => $id_utente]);
 
-        $_SESSION['successo'] = 'Operatore rimosso.';
+        $_SESSION['successo'] = 'OSA rimosso.';
         header('Location: ' . APP_URL . '/device/show/' . $id);
         exit;
     }

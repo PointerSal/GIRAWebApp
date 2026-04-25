@@ -23,7 +23,7 @@ foreach ($device_disponibili as $d) {
   <div>
     <h1>Device assegnati</h1>
     <div class="page-header-sub">
-      Operatore: <?= htmlspecialchars($target['nome'] . ' ' . $target['cognome']) ?>
+      OSA: <?= htmlspecialchars($target['nome'] . ' ' . $target['cognome']) ?>
     </div>
   </div>
   <a href="<?= APP_URL ?>/utenti" class="btn btn--outline">← Utenti</a>
@@ -48,14 +48,14 @@ foreach ($device_disponibili as $d) {
     <div style="display:flex; gap:var(--space-sm); flex-wrap:wrap; margin-bottom:var(--space-lg);">
 
       <?php if ($multi_struttura): ?>
-      <select id="filtro-struttura" onchange="applicaFiltri()"
-        style="background:var(--surface); border:1px solid var(--border); color:var(--text);
+        <select id="filtro-struttura" onchange="applicaFiltri()"
+          style="background:var(--surface); border:1px solid var(--border); color:var(--text);
                font-size:0.78rem; padding:5px 10px; border-radius:var(--radius-sm); cursor:pointer;">
-        <option value="">Tutte le strutture</option>
-        <?php foreach (array_keys($per_struttura) as $nome): ?>
-          <option value="<?= htmlspecialchars($nome) ?>"><?= htmlspecialchars($nome) ?></option>
-        <?php endforeach; ?>
-      </select>
+          <option value="">Tutte le strutture</option>
+          <?php foreach (array_keys($per_struttura) as $nome): ?>
+            <option value="<?= htmlspecialchars($nome) ?>"><?= htmlspecialchars($nome) ?></option>
+          <?php endforeach; ?>
+        </select>
       <?php endif; ?>
 
       <select id="filtro-area" onchange="applicaFiltri()"
@@ -134,61 +134,61 @@ foreach ($device_disponibili as $d) {
   </div>
 
   <script>
-  // Dati subaree per cascata
-  const subareePerArea = {};
-  <?php foreach ($device_disponibili as $d): ?>
-    <?php if ($d['area'] && $d['subarea']): ?>
-    if (!subareePerArea[<?= json_encode($d['area']) ?>]) {
-      subareePerArea[<?= json_encode($d['area']) ?>] = [];
+    // Dati subaree per cascata
+    const subareePerArea = {};
+    <?php foreach ($device_disponibili as $d): ?>
+      <?php if ($d['area'] && $d['subarea']): ?>
+        if (!subareePerArea[<?= json_encode($d['area']) ?>]) {
+          subareePerArea[<?= json_encode($d['area']) ?>] = [];
+        }
+        if (!subareePerArea[<?= json_encode($d['area']) ?>].includes(<?= json_encode($d['subarea']) ?>)) {
+          subareePerArea[<?= json_encode($d['area']) ?>].push(<?= json_encode($d['subarea']) ?>);
+        }
+      <?php endif; ?>
+    <?php endforeach; ?>
+
+    function applicaFiltri() {
+      const struttura = document.getElementById('filtro-struttura')?.value ?? '';
+      const area = document.getElementById('filtro-area').value;
+      const subarea = document.getElementById('filtro-subarea').value;
+
+      // Aggiorna subarea in cascata
+      const filtroSubarea = document.getElementById('filtro-subarea');
+      const subareeDisp = area && subareePerArea[area] ? subareePerArea[area] : [];
+      filtroSubarea.innerHTML = '<option value="">Tutte le subaree</option>';
+      subareeDisp.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = s;
+        if (s === subarea) opt.selected = true;
+        filtroSubarea.appendChild(opt);
+      });
+
+      // Filtra righe
+      document.querySelectorAll('.device-row').forEach(row => {
+        const rStr = row.dataset.struttura;
+        const rArea = row.dataset.area;
+        const rSub = row.dataset.subarea;
+
+        const okStr = !struttura || rStr === struttura;
+        const okArea = !area || rArea === area;
+        const okSub = !filtroSubarea.value || rSub === filtroSubarea.value;
+
+        row.style.display = (okStr && okArea && okSub) ? 'flex' : 'none';
+      });
+
+      aggiornaContatore();
     }
-    if (!subareePerArea[<?= json_encode($d['area']) ?>].includes(<?= json_encode($d['subarea']) ?>)) {
-      subareePerArea[<?= json_encode($d['area']) ?>].push(<?= json_encode($d['subarea']) ?>);
+
+    function aggiornaContatore() {
+      const totali = document.querySelectorAll('input[name="device_ids[]"]').length;
+      const selezionati = document.querySelectorAll('input[name="device_ids[]"]:checked').length;
+      document.getElementById('contatore-device').textContent =
+        selezionati + ' device selezionat' + (selezionati === 1 ? 'o' : 'i') + ' su ' + totali + ' disponibili';
     }
-    <?php endif; ?>
-  <?php endforeach; ?>
 
-  function applicaFiltri() {
-    const struttura = document.getElementById('filtro-struttura')?.value ?? '';
-    const area      = document.getElementById('filtro-area').value;
-    const subarea   = document.getElementById('filtro-subarea').value;
-
-    // Aggiorna subarea in cascata
-    const filtroSubarea = document.getElementById('filtro-subarea');
-    const subareeDisp   = area && subareePerArea[area] ? subareePerArea[area] : [];
-    filtroSubarea.innerHTML = '<option value="">Tutte le subaree</option>';
-    subareeDisp.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s;
-      opt.textContent = s;
-      if (s === subarea) opt.selected = true;
-      filtroSubarea.appendChild(opt);
-    });
-
-    // Filtra righe
-    document.querySelectorAll('.device-row').forEach(row => {
-      const rStr = row.dataset.struttura;
-      const rArea = row.dataset.area;
-      const rSub  = row.dataset.subarea;
-
-      const okStr = !struttura || rStr === struttura;
-      const okArea = !area || rArea === area;
-      const okSub  = !filtroSubarea.value || rSub === filtroSubarea.value;
-
-      row.style.display = (okStr && okArea && okSub) ? 'flex' : 'none';
-    });
-
-    aggiornaContatore();
-  }
-
-  function aggiornaContatore() {
-    const totali    = document.querySelectorAll('input[name="device_ids[]"]').length;
-    const selezionati = document.querySelectorAll('input[name="device_ids[]"]:checked').length;
-    document.getElementById('contatore-device').textContent =
-      selezionati + ' device selezionat' + (selezionati === 1 ? 'o' : 'i') + ' su ' + totali + ' disponibili';
-  }
-
-  // Init
-  document.addEventListener('DOMContentLoaded', aggiornaContatore);
+    // Init
+    document.addEventListener('DOMContentLoaded', aggiornaContatore);
   </script>
 
 <?php endif; ?>

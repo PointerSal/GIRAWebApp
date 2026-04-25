@@ -66,7 +66,7 @@ class AlertController
                 $alert = $stmt->fetchAll();
             }
         } else {
-            // Operatore — solo i device assegnati
+            // OSA — solo i device assegnati
             $stmt = $db->prepare(
                 "SELECT a.*, d.label, d.mac, d.id_struttura,
                         s.ragione_sociale AS struttura,

@@ -36,7 +36,7 @@ $cp = $current_page ?? '';
   <a href="<?= APP_URL ?>/alert/storico" class="<?= $cp === 'alert-storico' ? 'attivo' : '' ?>">📋 Storico alert</a>
   <a href="<?= APP_URL ?>/report" class="<?= $cp === 'report'     ? 'attivo' : '' ?>">📊 Report</a>
 
-<?php else: /* RUOLO_UTENTE — operatore */ ?>
+<?php else: /* RUOLO_OSA — operatore */ ?>
 
   <div class="nav-sezione">Monitoraggio</div>
   <a href="<?= APP_URL ?>/dashboard" class="<?= $cp === 'dashboard'  ? 'attivo' : '' ?>">▦ Dashboard</a>

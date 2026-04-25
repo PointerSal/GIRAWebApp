@@ -211,7 +211,7 @@ class Auth
 
     public static function isOperatore(): bool
     {
-        return self::ruolo() === RUOLO_UTENTE;
+        return self::ruolo() === RUOLO_OSA;
     }
 
     /**

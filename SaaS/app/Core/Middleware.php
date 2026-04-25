@@ -76,7 +76,7 @@ class Middleware
     public static function richiediSanitario(): void
     {
         // Tutti i ruoli operativi (medico + operatore)
-        self::richiediRuolo([RUOLO_SUPERADMIN, RUOLO_ADMIN, RUOLO_MEDICO, RUOLO_UTENTE]);
+        self::richiediRuolo([RUOLO_SUPERADMIN, RUOLO_ADMIN, RUOLO_MEDICO, RUOLO_OSA]);
     }
 
     // ----------------------------------------------------------

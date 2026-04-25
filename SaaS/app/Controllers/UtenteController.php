@@ -579,7 +579,7 @@ class UtenteController
         $cognome   = trim($_POST['cognome']  ?? '');
         $mail      = trim($_POST['mail']     ?? '');
         $telefono  = trim($_POST['telefono'] ?? '') ?: null;
-        $id_ruolo  = (int)($_POST['id_ruolo'] ?? RUOLO_UTENTE);
+        $id_ruolo  = (int)($_POST['id_ruolo'] ?? RUOLO_OSA);
         $password  = $_POST['password'] ?? '';
         $attivo    = isset($_POST['attivo']) ? 1 : 0;
         $strutture_ids = array_map('intval', $_POST['strutture_ids'] ?? []);
@@ -609,7 +609,7 @@ class UtenteController
 
         // Un admin non può creare superadmin
         if (!Auth::isSuperadmin() && $id_ruolo === RUOLO_SUPERADMIN) {
-            $id_ruolo = RUOLO_UTENTE;
+            $id_ruolo = RUOLO_OSA;
         }
 
         return [

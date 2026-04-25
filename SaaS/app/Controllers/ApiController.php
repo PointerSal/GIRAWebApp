@@ -36,7 +36,6 @@ class ApiController
                            a.aperto_alle ASC"
             );
             $alert = $stmt->fetchAll();
-
         } elseif (in_array($ruolo, [RUOLO_ADMIN, RUOLO_MEDICO])) {
             $strutture_ids = $id_struttura ? [$id_struttura] : Auth::strutture_accessibili();
             if (empty($strutture_ids)) {
@@ -60,9 +59,8 @@ class ApiController
             );
             $stmt->execute($strutture_ids);
             $alert = $stmt->fetchAll();
-
         } else {
-            // Operatore
+            // OSA
             $stmt = $db->prepare(
                 "SELECT a.id, a.tipo, a.gestito, a.aperto_alle,
                         d.label, d.mac,
@@ -119,7 +117,6 @@ class ApiController
                   ORDER BY d.label"
             );
             $device = $stmt->fetchAll();
-
         } elseif (in_array($ruolo, [RUOLO_ADMIN, RUOLO_MEDICO])) {
             $strutture_ids = $id_struttura ? [$id_struttura] : Auth::strutture_accessibili();
             if (empty($strutture_ids)) self::_json([]);
@@ -140,9 +137,8 @@ class ApiController
             );
             $stmt->execute($strutture_ids);
             $device = $stmt->fetchAll();
-
         } else {
-            // Operatore — solo device assegnati
+            // OSA — solo device assegnati
             $stmt = $db->prepare(
                 "SELECT d.id, d.label, d.mac,
                         ds.posizione, ds.stato_batt, ds.stato_segnale, ds.stato_pulsante,
@@ -211,7 +207,7 @@ class ApiController
                 'alert_arancio' => (int)($per_tipo['ARANCIO']  ?? 0),
                 'alert_batt'    => (int)($per_tipo['BATTERIA'] ?? 0),
                 'alert_offline' => (int)($per_tipo['OFFLINE']  ?? 0),
-                'alert_pulsante'=> (int)($per_tipo['PULSANTE'] ?? 0),
+                'alert_pulsante' => (int)($per_tipo['PULSANTE'] ?? 0),
             ];
         }
 
