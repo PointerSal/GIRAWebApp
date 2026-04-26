@@ -61,6 +61,7 @@
   /* Transizioni */
   --transition: 0.2s ease;
   --transition-slow: 0.3s ease;
+  --bed-stroke: rgba(255,255,255,0.6);
 }
 
 
@@ -607,6 +608,7 @@ body.tema-light {
   --alert-warn-color:var(--amber);
   --alert-red-bg:    rgba(192, 57, 43, 0.10);
   --alert-red-color: var(--red);
+  --bed-stroke: rgba(0,0,0,0.5);
 }
 
 body.tema-light .topbar-badge {
