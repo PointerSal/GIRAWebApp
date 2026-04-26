@@ -32,6 +32,7 @@ include VIEW_PATH . 'layout/header.php';
     <a href="#notifiche" style="color:var(--green); font-size:0.82rem;">11. Notifiche push</a>
     <a href="#report" style="color:var(--green); font-size:0.82rem;">12. Report</a>
     <a href="#primo-accesso" style="color:var(--green); font-size:0.82rem;">13. Primo accesso</a>
+    <a href="#installazione" style="color:var(--green); font-size:0.82rem;">14. Installazione app</a>
   </div>
 </div>
 
@@ -371,6 +372,61 @@ include VIEW_PATH . 'layout/header.php';
     <li>Se sei un operatore, verifica di avere dispositivi assegnati — contatta il tuo admin in caso contrario.</li>
     <li>In caso di problemi di accesso, contatta il tuo amministratore per il reset della password.</li>
   </ol>
+</div>
+
+<!-- 14. Installazione app -->
+<div class="card" id="installazione" style="margin-bottom:var(--space-xl);">
+  <p class="section-label">14. Installazione app</p>
+  <p style="font-size:0.85rem; color:var(--text); line-height:1.7;">
+    GIRA può essere installata sul dispositivo
+    come una normale app, senza passare dagli store. Una volta installata funziona
+    come un'app nativa, con la propria icona sulla schermata Home o sul desktop.
+  </p>
+
+  <!-- Android -->
+  <p class="section-label" style="margin-top:var(--space-xl);">📱 Android (Chrome)</p>
+  <ol style="font-size:0.82rem; color:var(--text); line-height:1.9; padding-left:var(--space-lg);">
+    <li>Apri <strong>gira.tischedo.it</strong> con Chrome.</li>
+    <li>Tocca i tre puntini in alto a destra → <strong>"Aggiungi a schermata Home"</strong> (o "Installa app").</li>
+    <li>Conferma — l'icona GIRA apparirà sulla schermata Home.</li>
+    <li>Apri GIRA dall'icona e vai su <strong>Profilo → Notifiche push</strong> per attivare gli alert.</li>
+  </ol>
+  <p style="font-size:0.82rem; color:var(--muted); margin-top:var(--space-sm);">
+    ✅ Installazione e notifiche push completamente supportate.
+  </p>
+
+  <!-- iOS -->
+  <p class="section-label" style="margin-top:var(--space-xl);">🍎 iOS (Safari)</p>
+  <ol style="font-size:0.82rem; color:var(--text); line-height:1.9; padding-left:var(--space-lg);">
+    <li>Apri <strong>gira.tischedo.it</strong> con <strong>Safari</strong> (non Chrome o altri browser).</li>
+    <li>Tocca l'icona di condivisione in basso (il quadrato con la freccia su).</li>
+    <li>Scorri e seleziona <strong>"Aggiungi a schermata Home"</strong>.</li>
+    <li>Conferma il nome e tocca <strong>"Aggiungi"</strong>.</li>
+    <li>Apri GIRA dall'icona sulla schermata Home.</li>
+  </ol>
+  <p style="font-size:0.82rem; color:var(--amber); margin-top:var(--space-sm);">
+    ⚠ Su iOS le notifiche push non sono ancora supportate. Riceverai gli alert solo
+    mentre l'app è aperta. Per le notifiche in background usa un dispositivo Android o desktop.
+  </p>
+
+  <!-- Desktop -->
+  <p class="section-label" style="margin-top:var(--space-xl);">💻 Desktop (Chrome / Edge)</p>
+  <ol style="font-size:0.82rem; color:var(--text); line-height:1.9; padding-left:var(--space-lg);">
+    <li>Apri <strong>gira.tischedo.it</strong> con Chrome o Edge.</li>
+    <li>Clicca sull'icona di installazione nella barra indirizzi (icona monitor con freccia) oppure vai nel menu → <strong>"Installa GIRA"</strong>.</li>
+    <li>Conferma l'installazione — GIRA si apre come finestra separata e viene aggiunta al menu Start / Launchpad.</li>
+    <li>Vai su <strong>Profilo → Notifiche push</strong> per attivare gli alert sul desktop.</li>
+  </ol>
+  <p style="font-size:0.82rem; color:var(--muted); margin-top:var(--space-sm);">
+    ✅ Installazione e notifiche push completamente supportate.
+  </p>
+
+  <!-- Nota generale -->
+  <p style="font-size:0.82rem; color:var(--muted); margin-top:var(--space-xl); padding-top:var(--space-md); border-top:1px solid var(--border);">
+    💡 Non è necessario installare l'app per usare GIRA — funziona perfettamente anche
+    dal browser. L'installazione è consigliata per chi deve monitorare i pazienti
+    continuativamente e vuole ricevere le notifiche push.
+  </p>
 </div>
 
 <?php include VIEW_PATH . 'layout/footer.php'; ?>
