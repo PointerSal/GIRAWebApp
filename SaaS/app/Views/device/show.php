@@ -42,7 +42,10 @@ $offline = isset($stato) && $stato
           'Connessione' => $offline
             ? '<span style="color:var(--amber);">⚠ Offline</span>'
             : '<span style="color:var(--green);">● Online</span>',
-          'Posizione'   => '<span class="pill ' . $pill_pos . '">' . $stato['posizione'] . '</span>',
+          'Posizione'   => '<span class="pill ' . $pill_pos . '">' . $stato['posizione'] . '</span>' .
+            ($stato['posizione'] === ($stato['posizione_validata'] ?? null)
+              ? ' <span style="font-size:0.68rem; color:var(--muted);">✓ validata</span>'
+              : ' <span style="font-size:0.68rem; color:var(--muted); opacity:0.65;">in aggiornamento</span>'),
           'Batteria'    => $stato['stato_batt'] !== null
             ? '<span style="color:' . ($stato['stato_batt'] < 20 ? 'var(--amber)' : 'var(--text)') . '">🔋 ' . $stato['stato_batt'] . '%</span>'
             : '—',
@@ -197,3 +200,7 @@ $offline = isset($stato) && $stato
     <?php endif; ?>
   </div>
 </div>
+<script>
+  // Aggiorna la pagina ogni 10 secondi per mostrare dati freschi
+  setTimeout(() => location.reload(), 10000);
+</script>

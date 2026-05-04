@@ -37,7 +37,8 @@
       ?>
       <div class="table-row" data-device-id="<?= $d['id'] ?>" style="<?= $d['alert_tipo'] === 'PULSANTE' ? 'background:rgba(224,92,92,0.06);' : '' ?>">
         <span class="gira-stato-pill" style="width:56px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:2px;">
-          <?php $bed_size = 44; include VIEW_PATH . 'layout/_bed_icon.php'; ?>
+          <?php $bed_size = 44;
+          include VIEW_PATH . 'layout/_bed_icon.php'; ?>
           <span style="font-size:0.58rem; color:<?= $bed_color ?>; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">
             <?= $bed_label ?>
           </span>
@@ -55,7 +56,10 @@
 
         <span class="table-row__meta" style="display:flex; gap:var(--space-md); align-items:center;">
           <?php if (!$offline && $d['posizione']): ?>
-            <span class="gira-posizione" style="font-size:0.72rem; color:var(--text);"><?= $d['posizione'] ?></span>
+            <?php $is_validata = $d['posizione_validata'] && $d['posizione'] === $d['posizione_validata']; ?>
+            <span class="gira-posizione" style="font-size:0.72rem; color:var(--text); <?= $is_validata ? 'font-weight:700;' : 'opacity:0.65;' ?>">
+              <?= $d['posizione'] ?>
+            </span>
           <?php elseif ($offline): ?>
             <span style="font-size:0.72rem; color:var(--muted);">Nessun segnale</span>
           <?php endif; ?>
@@ -80,7 +84,11 @@
       </div>
     <?php endforeach; ?>
   </div>
-<?php endif; ?>
+<?php if (!empty($device_assegnati)): ?>
+  <div style="margin-top:var(--space-md); padding-top:var(--space-sm); border-top:1px solid var(--border); font-size:0.68rem; color:var(--muted);">
+    <strong>SUPINO</strong> = posizione validata &nbsp;·&nbsp; <span style="opacity:0.65;">SUPINO</span> = in aggiornamento
+  </div>
+  <?php endif; ?>
 
 <script>
   function aggiornaOrologio() {

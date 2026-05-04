@@ -1,0 +1,165 @@
+
+============================================================
+=== PACCHETTO 1 / 10 ===
+=== 2026-04-30 16:50:55 ===
+============================================================
+
+RAW BODY:
+{"mac":"ef:3a:c3:36:b2:16","name":"BeaconGira1","uuid":"fda50693-a4e2-4fb1-afcf-c6eb07647825","major":10011,"minor":19641,"event":"warning","ts":"30/04/2026-16:50:54","accel":{"x":-250,"y":-743,"z":-82},"warning":1,"button":0,"batt_mv":2905,"uptime_s":10162,"rssi":-70}
+
+JSON DECODED:
+Array
+(
+    [mac] => ef:3a:c3:36:b2:16
+    [name] => BeaconGira1
+    [uuid] => fda50693-a4e2-4fb1-afcf-c6eb07647825
+    [major] => 10011
+    [minor] => 19641
+    [event] => warning
+    [ts] => 30/04/2026-16:50:54
+    [accel] => Array
+        (
+            [x] => -250
+            [y] => -743
+            [z] => -82
+        )
+
+    [warning] => 1
+    [button] => 0
+    [batt_mv] => 2905
+    [uptime_s] => 10162
+    [rssi] => -70
+)
+
+
+============================================================
+=== PACCHETTO 2 / 10 ===
+=== 2026-04-30 16:51:32 ===
+============================================================
+
+RAW BODY:
+{"mac":"ef:3a:c3:36:b2:16","name":"BeaconGira1","uuid":"fda50693-a4e2-4fb1-afcf-c6eb07647825","major":10011,"minor":19641,"event":"warning","ts":"30/04/2026-16:51:30","accel":{"x":8,"y":60,"z":794},"warning":1,"button":0,"batt_mv":2895,"uptime_s":10200,"rssi":-39}
+
+JSON DECODED:
+Array
+(
+    [mac] => ef:3a:c3:36:b2:16
+    [name] => BeaconGira1
+    [uuid] => fda50693-a4e2-4fb1-afcf-c6eb07647825
+    [major] => 10011
+    [minor] => 19641
+    [event] => warning
+    [ts] => 30/04/2026-16:51:30
+    [accel] => Array
+        (
+            [x] => 8
+            [y] => 60
+            [z] => 794
+        )
+
+    [warning] => 1
+    [button] => 0
+    [batt_mv] => 2895
+    [uptime_s] => 10200
+    [rssi] => -39
+)
+
+
+============================================================
+=== PACCHETTO 3 / 10 ===
+=== 2026-04-30 16:51:38 ===
+============================================================
+
+RAW BODY:
+{"mac":"ef:3a:c3:36:b2:16","name":"BeaconGira1","uuid":"fda50693-a4e2-4fb1-afcf-c6eb07647825","major":10011,"minor":19641,"event":"warning","ts":"30/04/2026-16:51:36","accel":{"x":7,"y":-15,"z":982},"warning":1,"button":0,"batt_mv":2895,"uptime_s":10206,"rssi":-31}
+
+JSON DECODED:
+Array
+(
+    [mac] => ef:3a:c3:36:b2:16
+    [name] => BeaconGira1
+    [uuid] => fda50693-a4e2-4fb1-afcf-c6eb07647825
+    [major] => 10011
+    [minor] => 19641
+    [event] => warning
+    [ts] => 30/04/2026-16:51:36
+    [accel] => Array
+        (
+            [x] => 7
+            [y] => -15
+            [z] => 982
+        )
+
+    [warning] => 1
+    [button] => 0
+    [batt_mv] => 2895
+    [uptime_s] => 10206
+    [rssi] => -31
+)
+
+
+============================================================
+=== PACCHETTO 4 / 10 ===
+=== 2026-04-30 16:54:58 ===
+============================================================
+
+RAW BODY:
+{"mac":"ef:3a:c3:36:b2:16","name":"BeaconGira1","uuid":"fda50693-a4e2-4fb1-afcf-c6eb07647825","major":10011,"minor":19641,"event":"warning","ts":"30/04/2026-16:54:56","accel":{"x":9,"y":-13,"z":976},"warning":1,"button":0,"batt_mv":2904,"uptime_s":10401,"rssi":-39}
+
+JSON DECODED:
+Array
+(
+    [mac] => ef:3a:c3:36:b2:16
+    [name] => BeaconGira1
+    [uuid] => fda50693-a4e2-4fb1-afcf-c6eb07647825
+    [major] => 10011
+    [minor] => 19641
+    [event] => warning
+    [ts] => 30/04/2026-16:54:56
+    [accel] => Array
+        (
+            [x] => 9
+            [y] => -13
+            [z] => 976
+        )
+
+    [warning] => 1
+    [button] => 0
+    [batt_mv] => 2904
+    [uptime_s] => 10401
+    [rssi] => -39
+)
+
+
+============================================================
+=== PACCHETTO 5 / 10 ===
+=== 2026-04-30 16:59:58 ===
+============================================================
+
+RAW BODY:
+{"mac":"ef:3a:c3:36:b2:16","name":"BeaconGira1","uuid":"fda50693-a4e2-4fb1-afcf-c6eb07647825","major":10011,"minor":19641,"event":"periodic","ts":"30/04/2026-16:59:57","accel":{"x":9,"y":-19,"z":975},"warning":0,"button":0,"batt_mv":2903,"uptime_s":10703,"rssi":-35}
+
+JSON DECODED:
+Array
+(
+    [mac] => ef:3a:c3:36:b2:16
+    [name] => BeaconGira1
+    [uuid] => fda50693-a4e2-4fb1-afcf-c6eb07647825
+    [major] => 10011
+    [minor] => 19641
+    [event] => periodic
+    [ts] => 30/04/2026-16:59:57
+    [accel] => Array
+        (
+            [x] => 9
+            [y] => -19
+            [z] => 975
+        )
+
+    [warning] => 0
+    [button] => 0
+    [batt_mv] => 2903
+    [uptime_s] => 10703
+    [rssi] => -35
+)
+

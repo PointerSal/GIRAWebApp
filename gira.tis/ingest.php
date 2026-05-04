@@ -379,9 +379,29 @@ function analizza_alert(
     // ── Posizioni a rischio ──────────────────────────────────
     $posizioni_a_rischio = ['SUPINO', 'PRONO', 'SCONOSCIUTO'];
 
-    if (!in_array($posizione, $posizioni_a_rischio)) {
+    // Leggi la posizione VALIDATA (log aperto) — non il campione grezzo
+    $pos_validata_row = $db->prepare(
+        "SELECT posizione FROM gir_posizione_log
+          WHERE id_device = :id AND terminato_alle IS NULL
+          ORDER BY iniziato_alle DESC LIMIT 1"
+    );
+    $pos_validata_row->execute([':id' => $idDevice]);
+    $posizione_validata = $pos_validata_row->fetchColumn() ?: null;
+
+    // Chiudi alert solo se la posizione VALIDATA è sicura
+    // (ignora campioni grezzi isolati — evita falsi reset)
+    if ($posizione_validata && !in_array($posizione_validata, $posizioni_a_rischio)) {
         chiudi_alert_immobilita($db, $idDevice);
         return;
+    }
+
+    // Se non c'è posizione validata o è a rischio, continua l'analisi
+    if (!$posizione_validata || !in_array($posizione_validata, $posizioni_a_rischio)) {
+        // Nessuna posizione validata nota — usa quella grezza per decidere
+        if (!in_array($posizione, $posizioni_a_rischio)) {
+            chiudi_alert_immobilita($db, $idDevice);
+            return;
+        }
     }
 
     // La posizione deve essere stabile da almeno MIN_POSIZIONE_MINUTI

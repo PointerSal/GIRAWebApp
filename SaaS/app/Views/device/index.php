@@ -82,7 +82,10 @@ asort($strutture_uniche);
           <?php elseif ($offline): ?>
             <span style="color:var(--amber);">Offline</span>
           <?php elseif ($d['posizione']): ?>
-            <span style="color:var(--text);"><?= $d['posizione'] ?></span>
+            <?php $is_validata = $d['posizione_validata'] && $d['posizione'] === $d['posizione_validata']; ?>
+            <span style="color:var(--text); <?= $is_validata ? 'font-weight:700;' : 'opacity:0.65;' ?>">
+              <?= $d['posizione'] ?>
+            </span>
           <?php else: ?>
             <span style="color:var(--muted);">—</span>
           <?php endif; ?>
@@ -107,5 +110,10 @@ asort($strutture_uniche);
 
       </div>
     <?php endforeach; ?>
+  <?php endif; ?>
+  <?php if (!empty($device_filtrati)): ?>
+    <div style="margin-top:var(--space-md); padding-top:var(--space-sm); border-top:1px solid var(--border); font-size:0.68rem; color:var(--muted);">
+      <strong>SUPINO</strong> = posizione validata &nbsp;·&nbsp; <span style="opacity:0.65;">SUPINO</span> = in aggiornamento
+    </div>
   <?php endif; ?>
 </div>

@@ -83,7 +83,10 @@
           </span>
           <span class="table-row__meta" style="display:flex; gap:var(--space-md); align-items:center;">
             <?php if (!$offline && $d['posizione']): ?>
-              <span class="gira-posizione" style="font-size:0.72rem;"><?= $d['posizione'] ?></span>
+              <?php $is_validata = $d['posizione_validata'] && $d['posizione'] === $d['posizione_validata']; ?>
+              <span class="gira-posizione" style="font-size:0.72rem; <?= $is_validata ? 'font-weight:700;' : 'opacity:0.65;' ?>">
+                <?= $d['posizione'] ?>
+              </span>
             <?php endif; ?>
             <?php if ($d['stato_batt'] !== null): ?>
               <span class="gira-batteria" style="font-size:0.72rem; color:<?= $d['stato_batt'] < 20 ? 'var(--amber)' : 'var(--muted)' ?>">
@@ -99,17 +102,22 @@
       <?php endforeach; ?>
     <?php endif; ?>
   </div>
+  <?php if (!empty($device_stato)): ?>
+    <div style="margin-top:var(--space-md); padding-top:var(--space-sm); border-top:1px solid var(--border); font-size:0.68rem; color:var(--muted);">
+      <strong>SUPINO</strong> = posizione validata &nbsp;·&nbsp; <span style="opacity:0.65;">SUPINO</span> = in aggiornamento
+    </div>
+  <?php endif; ?>
 </div>
 
 <script>
-  function aggiornaOrologio() {
-    const now = new Date();
-    const d = String(now.getDate()).padStart(2, '0');
-    const m = String(now.getMonth() + 1).padStart(2, '0');
-    const Y = now.getFullYear();
-    const H = String(now.getHours()).padStart(2, '0');
-    const i = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('gira-orologio').textContent = d + '/' + m + '/' + Y + ' ' + H + ':' + i;
+  function aggiornaOrologio()
+  const now = new Date();
+  const d = String(now.getDate()).padStart(2, '0');
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const Y = now.getFullYear();
+  const H = String(now.getHours()).padStart(2, '0');
+  const i = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('gira-orologio').textContent = d + '/' + m + '/' + Y + ' ' + H + ':' + i;
   }
   aggiornaOrologio();
   setInterval(aggiornaOrologio, 1000);

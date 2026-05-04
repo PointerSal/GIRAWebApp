@@ -32,16 +32,19 @@ class DeviceController
                         ds.posizione, ds.stato_batt, ds.stato_segnale,
                         ds.ultimo_contatto,
                         TIMESTAMPDIFF(MINUTE, ds.ultimo_contatto, NOW()) AS minuti_silenzio,
-                        COUNT(ud.id_utente) AS tot_utenti_assegnati
+                        COUNT(ud.id_utente) AS tot_utenti_assegnati,
+                        pl.posizione AS posizione_validata
                    FROM gir_device d
                    JOIN gir_struttura s      ON s.id = d.id_struttura
               LEFT JOIN gir_ubicazione u     ON u.id = d.id_ubicazione
               LEFT JOIN gir_device_stato ds  ON ds.id_device = d.id
               LEFT JOIN gir_utente_device ud ON ud.id_device = d.id
+              LEFT JOIN gir_posizione_log pl ON pl.id_device = d.id
+                                            AND pl.terminato_alle IS NULL
                   WHERE d.id_struttura IN ($placeholders)
                   GROUP BY d.id, s.ragione_sociale, u.area, u.subarea,
                            ds.posizione, ds.stato_batt, ds.stato_segnale,
-                           ds.ultimo_contatto
+                           ds.ultimo_contatto, pl.posizione
                   ORDER BY u.area, u.subarea, d.label, d.mac"
             );
             $stmt->execute($strutture_ids);
@@ -66,9 +69,13 @@ class DeviceController
 
         $db = Database::getInstance();
 
-        // Stato attuale
+        // Stato attuale + posizione validata
         $stato = $db->prepare(
-            'SELECT * FROM gir_device_stato WHERE id_device = :id LIMIT 1'
+            'SELECT ds.*, pl.posizione AS posizione_validata
+               FROM gir_device_stato ds
+          LEFT JOIN gir_posizione_log pl ON pl.id_device = ds.id_device
+                                        AND pl.terminato_alle IS NULL
+              WHERE ds.id_device = :id LIMIT 1'
         );
         $stato->execute([':id' => $id]);
         $stato = $stato->fetch();

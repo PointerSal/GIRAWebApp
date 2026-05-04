@@ -129,13 +129,16 @@ class DashboardController
                     ds.posizione, ds.stato_batt, ds.stato_segnale,
                     ds.ultimo_contatto,
                     TIMESTAMPDIFF(MINUTE, ds.ultimo_contatto, NOW()) AS minuti_silenzio,
-                    a.tipo AS alert_tipo
+                    a.tipo AS alert_tipo,
+                    pl.posizione AS posizione_validata
                FROM gir_device d
-          LEFT JOIN gir_ubicazione u  ON u.id = d.id_ubicazione
+          LEFT JOIN gir_ubicazione u    ON u.id = d.id_ubicazione
           LEFT JOIN gir_device_stato ds ON ds.id_device = d.id
-          LEFT JOIN gir_alert a       ON a.id_device = d.id
-                                     AND a.chiuso_alle IS NULL
-                                     AND a.tipo IN ("ROSSO","ARANCIO")
+          LEFT JOIN gir_alert a         ON a.id_device = d.id
+                                       AND a.chiuso_alle IS NULL
+                                       AND a.tipo IN ("ROSSO","ARANCIO")
+          LEFT JOIN gir_posizione_log pl ON pl.id_device = d.id
+                                        AND pl.terminato_alle IS NULL
               WHERE d.id_struttura = :id AND d.attivo = 1
               ORDER BY a.tipo DESC, d.label'
         );
@@ -205,7 +208,8 @@ class DashboardController
                     ds.ultimo_contatto,
                     TIMESTAMPDIFF(MINUTE, ds.ultimo_contatto, NOW()) AS minuti_silenzio,
                     a.id AS alert_id, a.tipo AS alert_tipo,
-                    TIMESTAMPDIFF(MINUTE, a.aperto_alle, NOW()) AS alert_minuti
+                    TIMESTAMPDIFF(MINUTE, a.aperto_alle, NOW()) AS alert_minuti,
+                    pl.posizione AS posizione_validata
                FROM gir_utente_device ud
                JOIN gir_device d          ON d.id = ud.id_device AND d.attivo = 1
           LEFT JOIN gir_ubicazione u       ON u.id = d.id_ubicazione
@@ -213,6 +217,8 @@ class DashboardController
           LEFT JOIN gir_alert a            ON a.id_device = d.id
                                           AND a.chiuso_alle IS NULL
                                           AND a.tipo IN ("ROSSO","ARANCIO","PULSANTE")
+          LEFT JOIN gir_posizione_log pl   ON pl.id_device = d.id
+                                          AND pl.terminato_alle IS NULL
               WHERE ud.id_utente = :uid AND (:id_struttura1 = 0 OR d.id_struttura = :id_struttura2)
               ORDER BY FIELD(a.tipo,"PULSANTE","ROSSO","ARANCIO"), d.label'
         );
